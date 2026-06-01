@@ -4,7 +4,7 @@ JobFlow AI is a CLI-first Job Application Orchestration Platform built with a st
 
 ## Current Status
 
-Phase 3 deterministic match scoring.
+Phase 4 resume intelligence retrieval.
 
 ## Commands
 
@@ -32,6 +32,13 @@ Deterministic scoring smoke command:
 
 ```bash
 jobflow score --job-id <job_id>
+```
+
+Resume fragment smoke commands:
+
+```bash
+jobflow fragments add --type project --text "Built a Playwright automation framework." --source-label "Example Project"
+jobflow fragments context --job-id <job_id>
 ```
 
 ## Architecture Rule
