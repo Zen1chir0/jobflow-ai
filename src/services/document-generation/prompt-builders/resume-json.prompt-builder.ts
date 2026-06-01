@@ -9,9 +9,9 @@ export function buildResumeJsonPrompt(input: DocumentGenerationInput): BuiltProm
     [
       "Return an object with summary, skills, experience, projects, education, and certifications.",
       "summary must be { text, evidenceFragmentIds }.",
-      "experience entries must contain company, role, optional dates, highlights, and evidenceFragmentIds.",
+      "experience entries must contain company, role, optional startDate/endDate, highlights, and evidenceFragmentIds.",
+      "Dates must use YYYY-MM format or Present.",
       "projects must contain name, description, technologies, highlights, and evidenceFragmentIds."
     ].join(" ")
   );
 }
-
