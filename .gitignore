@@ -1,0 +1,13 @@
+node_modules/
+dist/
+coverage/
+.env
+.env.*
+!.env.example
+storage/playwright-state/
+storage/screenshots/
+storage/pdf/
+storage/resumes/
+storage/latex/
+*.pdf
+*.log
