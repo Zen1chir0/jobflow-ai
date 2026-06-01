@@ -744,6 +744,16 @@ service role keys
 
 Session state must remain local.
 
+Do not push to the GitHub repository.
+
+Codex may create local commits when required by the stage-gated completion process, but must not run:
+
+```bash
+git push
+```
+
+The user will review and push changes manually.
+
 ---
 
 # SECTION 22

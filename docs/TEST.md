@@ -1,47 +1,41 @@
-# Functional Test Guide
+# JobFlow AI Test Plan
 
-This guide explains how to functionally test the currently implemented JobFlow AI features.
+This document defines the complete testing plan for the currently implemented JobFlow AI phases.
 
 Implemented scope covered here:
 
-- Phase 0: foundation, config loading, CLI health
-- Phase 1: job discovery pipeline
-- Phase 2: deterministic job parsing pipeline
-- Phase 3: deterministic match scoring pipeline
+```text
+Phase 00 - Foundation
+Phase 01 - Job Discovery
+Phase 02 - Job Parsing
+Phase 03 - Match Scoring
+Phase 04 - Resume Intelligence
+```
 
 Future phases are intentionally excluded.
 
-## Prerequisites
+This document must not be used to justify Phase 5 document generation, LaTeX rendering, ATS automation, lifecycle, observability service, or analytics work.
 
-Install dependencies:
+## Testing Philosophy
 
-```bash
-npm install
-```
+JobFlow AI is built as a stage-gated engineering platform. Testing must prove that each phase is correct, isolated, and ready before the next phase begins.
 
-Create a local `.env` file with real development credentials:
+Core principles:
 
-```text
-NODE_ENV=development
-LOG_LEVEL=info
-SUPABASE_URL=...
-SUPABASE_ANON_KEY=...
-SUPABASE_SERVICE_ROLE_KEY=...
-LLM_PROVIDER=...
-LLM_BASE_URL=...
-LLM_API_KEY=...
-LLM_MODEL=...
-```
+- Deterministic systems require direct unit tests.
+- CLI files are tested for argument parsing and output only.
+- Business logic belongs in services and use cases, not CLI tests.
+- Repository tests validate database mapping and architectural boundaries.
+- Supabase query syntax must stay inside repositories.
+- Provider behavior must be mockable.
+- Automated tests must not make live LLM or embedding API calls.
+- Tests must never use real secrets.
+- Tests must never print credentials, API keys, service role keys, or tokens.
+- Phase completion gates must pass before approval.
 
-Security rule:
+## Test Command Reference
 
-- Do not commit `.env`.
-- Do not paste credentials into terminal screenshots, logs, docs, or issue trackers.
-- `.env.example` must contain placeholders only.
-
-## Baseline Verification
-
-Run the full project gate:
+Required project gates:
 
 ```bash
 npm run lint
@@ -50,18 +44,81 @@ npm test
 npm run build
 ```
 
-Expected result:
+Compiled CLI help smoke tests:
 
-```text
-Lint: passed
-Typecheck: passed
-Tests: passed
-Build: passed
+```bash
+node dist\src\cli\index.js --help
+node dist\src\cli\index.js discover --help
+node dist\src\cli\index.js parse --help
+node dist\src\cli\index.js score --help
+node dist\src\cli\index.js fragments --help
 ```
 
-## CLI Health Check
+Targeted automated test commands:
 
-Run:
+```bash
+npm test -- tests/unit/config
+npm test -- tests/unit/services/discovery
+npm test -- tests/unit/services/parsing
+npm test -- tests/unit/services/scoring
+npm test -- tests/unit/services/resume-intelligence
+npm test -- tests/integration/repositories
+npm test -- tests/integration/cli-discover.test.ts tests/integration/cli-parse.test.ts tests/integration/cli-score.test.ts tests/integration/cli-fragments.test.ts
+```
+
+## Test Layers
+
+Unit tests:
+
+- Validate pure functions, services, domain rules, and use-case orchestration.
+- Use fake repositories, fake providers, and deterministic input fixtures.
+- Must not access Supabase, the filesystem, or live providers.
+
+Integration tests:
+
+- Validate repository mapping and CLI command behavior.
+- Use mocked Supabase clients for repository tests.
+- Use mocked use cases for CLI tests.
+- Must not perform live database writes unless explicitly requested.
+
+CLI smoke tests:
+
+- Validate compiled command availability.
+- Use `--help` unless a specific live functional test is explicitly requested.
+- Must not expose secrets.
+
+Manual functional tests:
+
+- May use the hosted Supabase project after schema readiness.
+- May use real `.env` credentials locally.
+- Must never commit `.env` or paste secrets into logs, reports, screenshots, or issues.
+
+## Phase-by-Phase Test Plan
+
+### Phase 00 - Foundation
+
+Automated coverage:
+
+- Environment loading defaults
+- Required environment validation
+- Invalid environment rejection
+- Stable application error codes
+- Structured logger behavior
+- Silent logging behavior
+- Supabase client shell creation
+- CLI health smoke behavior
+
+Representative tests:
+
+```text
+tests/unit/config/env.test.ts
+tests/unit/domain/application-error.test.ts
+tests/unit/integrations/supabase-client.test.ts
+tests/unit/utils/logger.test.ts
+tests/integration/cli-health.test.ts
+```
+
+Manual smoke command:
 
 ```bash
 node dist\src\cli\index.js health
@@ -73,257 +130,448 @@ Expected result:
 JobFlow AI ready (development)
 ```
 
-If this fails:
+### Phase 01 - Job Discovery
 
-- Confirm `.env` exists.
-- Confirm all required environment variables are present.
-- Confirm URLs are valid.
-- Confirm no secrets are printed in the error output.
+Automated coverage:
 
-## Phase 1 Functional Test: Manual Discovery
+- Job normalization
+- Required job field validation
+- ATS type inference from application URL
+- URL-based deduplication
+- Discovery service orchestration
+- Unsupported crawler source handling
+- Discovery use case persistence flow
+- Supabase job repository mapping
+- Discover CLI option parsing and output
 
-Manual discovery stores a discovered job through the repository layer.
+Representative tests:
 
-Run:
+```text
+tests/unit/services/discovery/job-normalizer.test.ts
+tests/unit/services/discovery/job-deduplicator.test.ts
+tests/unit/services/discovery/job-discovery.service.test.ts
+tests/unit/use-cases/discover-jobs.use-case.test.ts
+tests/integration/repositories/job.repository.test.ts
+tests/integration/cli-discover.test.ts
+```
+
+Manual functional command:
 
 ```bash
 node dist\src\cli\index.js discover --source manual --title "QA Automation Engineer" --company "Example Co" --url "https://example.com/jobs/qa-automation" --description "Responsibilities: Build automated tests. Requirements: TypeScript and Playwright." --location "Remote"
 ```
 
-Expected result:
+Expected checks:
+
+- A job row is created or updated in `jobs`.
+- Duplicate URL submissions do not create duplicate rows.
+- CLI output does not expose secrets.
+
+### Phase 02 - Job Parsing
+
+Automated coverage:
+
+- HTML cleaning
+- Section extraction
+- Skill extraction
+- Salary parsing
+- Seniority extraction
+- Job parsing service orchestration
+- Parsed job profile repository mapping
+- Parse use case orchestration
+- Parse CLI option parsing and output
+- Embedding interface exists without live provider calls
+
+Representative tests:
 
 ```text
-Discovered 1 job(s), stored 1, duplicates 0
-<job_id> Example Co - QA Automation Engineer
+tests/unit/services/parsing/html-cleaner.test.ts
+tests/unit/services/parsing/section-extractor.test.ts
+tests/unit/services/parsing/skill-extractor.test.ts
+tests/unit/services/parsing/salary-parser.test.ts
+tests/unit/services/parsing/seniority-extractor.test.ts
+tests/unit/services/parsing/job-parsing.service.test.ts
+tests/unit/use-cases/parse-job.use-case.test.ts
+tests/integration/repositories/parsed-job-profile.repository.test.ts
+tests/integration/cli-parse.test.ts
 ```
 
-Validation in Supabase:
-
-- Open the `jobs` table.
-- Confirm a row exists with:
-  - `title`: `QA Automation Engineer`
-  - `company`: `Example Co`
-  - `application_url`: `https://example.com/jobs/qa-automation`
-  - `remote_type`: `remote`
-  - `description_raw`: populated
-
-Repeat the same command.
-
-Expected result:
-
-- The repository should upsert by `application_url`.
-- The table should not create duplicate rows for the same URL.
-
-## Phase 2 Functional Test: Parse One Job
-
-Use a real `job_id` from the `jobs` table.
-
-Run:
+Manual functional commands:
 
 ```bash
 node dist\src\cli\index.js parse --job-id <job_id>
-```
-
-Expected result:
-
-```text
-Parsed 1 job(s)
-<job_id> <seniority> <count> required skill(s)
-```
-
-Validation in Supabase:
-
-- Open the `parsed_job_profiles` table.
-- Confirm a row exists with:
-  - `job_id`: the parsed job id
-  - `responsibilities`: array
-  - `required_skills`: array
-  - `preferred_skills`: array
-  - `seniority`: one of `intern`, `junior`, `mid`, `senior`, `lead`, `unknown`
-  - `compensation`: JSON object
-  - `raw_metadata.descriptionClean`: populated
-
-Also confirm the related row in `jobs` has:
-
-- `parsed_at`: populated
-- `description_clean`: populated when clean text is available
-
-## Phase 2 Functional Test: Parse All Unparsed Jobs
-
-Run:
-
-```bash
 node dist\src\cli\index.js parse --all --limit 5
 ```
 
-Expected result:
+Expected checks:
+
+- A parsed profile row exists in `parsed_job_profiles`.
+- The related `jobs.parsed_at` value is populated.
+- No live embedding provider call is required by automated tests.
+
+### Phase 03 - Match Scoring
+
+Automated coverage:
+
+- Required skill intersection scoring
+- Empty required skills behavior
+- Experience/seniority lookup table
+- Unknown seniority handling
+- Direct industry matching
+- Remote preference matching
+- Compensation threshold scoring
+- Currency mismatch handling
+- Weighted final score formula
+- Score use case orchestration
+- Job match score repository mapping
+- User profile repository mapping
+- Score CLI option parsing and output
+
+Representative tests:
 
 ```text
-Parsed <n> job(s)
+tests/unit/services/scoring/skill-match.scorer.test.ts
+tests/unit/services/scoring/experience-match.scorer.test.ts
+tests/unit/services/scoring/industry-match.scorer.test.ts
+tests/unit/services/scoring/location-match.scorer.test.ts
+tests/unit/services/scoring/compensation-match.scorer.test.ts
+tests/unit/services/scoring/match-scoring.service.test.ts
+tests/unit/use-cases/score-job.use-case.test.ts
+tests/integration/repositories/job-match-score.repository.test.ts
+tests/integration/repositories/user-profile.repository.test.ts
+tests/integration/cli-score.test.ts
 ```
 
-Validation:
-
-- Only jobs with `parsed_at` set to `null` should be selected.
-- Parsed jobs should receive corresponding `parsed_job_profiles` rows.
-- Parsed jobs should have `parsed_at` populated after parsing.
-
-## Phase 3 Functional Test: Score One Parsed Job
-
-Use a real `job_id` that exists in both:
-
-- `jobs`
-- `parsed_job_profiles`
-
-Confirm the `user_profile` table has one seeded profile with:
-
-- `verified_skills`
-- `target_industries`
-- `preferred_remote_types`
-- `minimum_salary`
-- `salary_currency`
-- `baseline_seniority`
-
-Run:
+Manual functional command:
 
 ```bash
 node dist\src\cli\index.js score --job-id <job_id>
 ```
 
-Expected result:
+Expected checks:
+
+- A score row exists in `job_match_scores`.
+- Individual score components and `final_score` are stored.
+- The weighted score formula is preserved.
+- The command does not perform parsing, generation, rendering, ATS automation, lifecycle, observability, or analytics work.
+
+### Phase 04 - Resume Intelligence
+
+Automated coverage:
+
+- Atomic resume fragment normalization
+- Fragment type validation
+- Embedding dimension validation
+- Existing parsed job embedding reuse
+- Job text embedding fallback
+- Default retrieval `topK=5`
+- Default similarity threshold `0.72`
+- Prompt context deduplication
+- Prompt context ordering
+- Resume intelligence service orchestration
+- OpenAI-compatible provider configuration
+- No live API calls in tests
+- Resume fragment repository insert mapping
+- `match_resume_fragments` RPC mapping
+- Create fragment use case orchestration
+- Retrieve context use case orchestration
+- `fragments add` CLI parsing and output
+- `fragments context` CLI parsing and output
+
+Representative tests:
 
 ```text
-Scored job <job_id>: <final_score>
-skill=<score> experience=<score> industry=<score> location=<score> compensation=<score>
+tests/unit/integrations/openai-compatible-embedding-provider.test.ts
+tests/unit/services/resume-intelligence/resume-fragmenter.test.ts
+tests/unit/services/resume-intelligence/resume-retriever.test.ts
+tests/unit/services/resume-intelligence/prompt-context-builder.test.ts
+tests/unit/services/resume-intelligence/resume-intelligence.service.test.ts
+tests/unit/use-cases/create-resume-fragment.use-case.test.ts
+tests/unit/use-cases/retrieve-resume-context.use-case.test.ts
+tests/integration/repositories/resume-fragment.repository.test.ts
+tests/integration/cli-fragments.test.ts
 ```
 
-Validation in Supabase:
+Manual functional commands:
 
-- Open the `job_match_scores` table.
-- Confirm a row exists with:
-  - `job_id`: the scored job id
-  - `skill_match`: numeric value from 0 to 100
-  - `experience_match`: numeric value from 0 to 100
-  - `industry_match`: numeric value from 0 to 100
-  - `location_match`: numeric value from 0 to 100
-  - `compensation_match`: numeric value from 0 to 100
-  - `final_score`: weighted score from 0 to 100
-  - `scoring_metadata`: JSON object with component metadata
+```bash
+node dist\src\cli\index.js fragments add --type project --text "Built a Playwright automation framework for regression testing." --source-label "Example Project"
+node dist\src\cli\index.js fragments context --job-id <job_id>
+node dist\src\cli\index.js fragments context --job-id <job_id> --top-k 3 --threshold 0.8
+```
 
-Expected formula:
+Expected checks:
+
+- Fragment rows are stored in `user_resume_fragments`.
+- Retrieval goes through `match_resume_fragments`.
+- Output contains context only.
+- No resume JSON, cover letter, recruiter message, PDF, ATS action, lifecycle transition, observability service, or analytics output is produced.
+
+Provider caveat:
+
+- The configured provider/model must support embeddings for live fragment creation.
+- Automated tests use fake providers and do not make live API calls.
+
+## Unit Test Inventory
+
+Foundation:
 
 ```text
-final_score =
-(skill_match * 0.40) +
-(experience_match * 0.25) +
-(industry_match * 0.10) +
-(location_match * 0.10) +
-(compensation_match * 0.15)
+tests/unit/config/env.test.ts
+tests/unit/domain/application-error.test.ts
+tests/unit/integrations/supabase-client.test.ts
+tests/unit/utils/logger.test.ts
 ```
 
-Repeat the same command.
+Discovery:
 
-Expected result:
-
-- The repository should upsert by `job_id`.
-- The table should not create duplicate score rows for the same job.
-
-## What Phase 3 Does Not Test
-
-The current parser does not:
-
-- call live LLM APIs
-- call live embedding APIs
-- generate resumes
-- rank jobs
-- render PDFs
-- automate ATS applications
-- transition application lifecycle states
-- produce analytics
-
-Embeddings are represented only by an optional field and provider interface.
-
-## Useful Test Commands
-
-Run all automated tests:
-
-```bash
-npm test
+```text
+tests/unit/services/discovery/job-normalizer.test.ts
+tests/unit/services/discovery/job-deduplicator.test.ts
+tests/unit/services/discovery/job-discovery.service.test.ts
+tests/unit/use-cases/discover-jobs.use-case.test.ts
 ```
 
-Run only parser-related tests:
+Parsing:
 
-```bash
-npm test -- tests/unit/services/parsing
+```text
+tests/unit/services/parsing/html-cleaner.test.ts
+tests/unit/services/parsing/section-extractor.test.ts
+tests/unit/services/parsing/skill-extractor.test.ts
+tests/unit/services/parsing/salary-parser.test.ts
+tests/unit/services/parsing/seniority-extractor.test.ts
+tests/unit/services/parsing/job-parsing.service.test.ts
+tests/unit/use-cases/parse-job.use-case.test.ts
 ```
 
-Run CLI integration tests:
+Scoring:
 
-```bash
-npm test -- tests/integration/cli-discover.test.ts tests/integration/cli-parse.test.ts
+```text
+tests/unit/services/scoring/skill-match.scorer.test.ts
+tests/unit/services/scoring/experience-match.scorer.test.ts
+tests/unit/services/scoring/industry-match.scorer.test.ts
+tests/unit/services/scoring/location-match.scorer.test.ts
+tests/unit/services/scoring/compensation-match.scorer.test.ts
+tests/unit/services/scoring/match-scoring.service.test.ts
+tests/unit/use-cases/score-job.use-case.test.ts
 ```
 
-Build and inspect command help:
+Resume intelligence:
+
+```text
+tests/unit/integrations/openai-compatible-embedding-provider.test.ts
+tests/unit/services/resume-intelligence/resume-fragmenter.test.ts
+tests/unit/services/resume-intelligence/resume-retriever.test.ts
+tests/unit/services/resume-intelligence/prompt-context-builder.test.ts
+tests/unit/services/resume-intelligence/resume-intelligence.service.test.ts
+tests/unit/use-cases/create-resume-fragment.use-case.test.ts
+tests/unit/use-cases/retrieve-resume-context.use-case.test.ts
+```
+
+## Integration Test Inventory
+
+Repository integration tests with mocked Supabase clients:
+
+```text
+tests/integration/repositories/job.repository.test.ts
+tests/integration/repositories/parsed-job-profile.repository.test.ts
+tests/integration/repositories/job-match-score.repository.test.ts
+tests/integration/repositories/user-profile.repository.test.ts
+tests/integration/repositories/resume-fragment.repository.test.ts
+```
+
+CLI integration tests with mocked use cases:
+
+```text
+tests/integration/cli-health.test.ts
+tests/integration/cli-discover.test.ts
+tests/integration/cli-parse.test.ts
+tests/integration/cli-score.test.ts
+tests/integration/cli-fragments.test.ts
+```
+
+## CLI Smoke Test Inventory
+
+Compiled command availability:
 
 ```bash
-npm run build
+node dist\src\cli\index.js --help
 node dist\src\cli\index.js discover --help
 node dist\src\cli\index.js parse --help
 node dist\src\cli\index.js score --help
+node dist\src\cli\index.js fragments --help
 ```
 
-## Troubleshooting
+Manual functional command inventory:
 
-Missing environment variable:
+```bash
+node dist\src\cli\index.js health
+node dist\src\cli\index.js discover --source manual --title "QA Automation Engineer" --company "Example Co" --url "https://example.com/jobs/qa-automation" --description "Responsibilities: Build automated tests."
+node dist\src\cli\index.js parse --job-id <job_id>
+node dist\src\cli\index.js parse --all --limit 5
+node dist\src\cli\index.js score --job-id <job_id>
+node dist\src\cli\index.js fragments add --type project --text "Built a Playwright automation framework." --source-label "Example Project"
+node dist\src\cli\index.js fragments context --job-id <job_id>
+```
 
-- Add the missing variable to `.env`.
-- Use `.env.example` as the placeholder reference.
+## Mocking Strategy
 
-Supabase insert or upsert error:
+Mock repositories when testing use cases:
 
-- Confirm the database schema has been applied.
-- Confirm `jobs` and `parsed_job_profiles` exist.
-- Confirm `SUPABASE_URL` and `SUPABASE_ANON_KEY` are correct.
-- Do not print or expose keys while debugging.
+- Use cases should prove orchestration.
+- They should not depend on Supabase client chains.
 
-Parse command reports job not found:
+Mock use cases when testing CLI commands:
 
-- Confirm the `job_id` exists in the `jobs` table.
-- Confirm you are using the correct Supabase project.
+- CLI tests should validate option parsing and display output.
+- CLI tests should not assert service formulas or repository behavior.
 
-Score command reports parsed job profile not found:
+Mock embedding providers:
 
-- Run `parse --job-id <job_id>` first.
-- Confirm `parsed_job_profiles.job_id` matches the job id.
+- Resume intelligence service tests must inject fake `EmbeddingProvider` implementations.
+- Provider tests may mock `fetch`.
+- No automated test may call a live embedding endpoint.
 
-Score command reports user profile not found:
+Mock Supabase clients in repository tests:
 
-- Confirm the seed `user_profile` row exists.
-- Confirm the table is in the same Supabase project configured by `.env`.
+- Repository tests should verify table names, payload shape, filters, upserts, inserts, updates, and RPC arguments.
+- Repository tests should not require hosted Supabase connectivity.
 
-No required skills extracted:
+## Supabase Testing Strategy
 
-- Confirm the job description contains known deterministic skill terms such as `TypeScript`, `Playwright`, `Supabase`, or `API Testing`.
-- Add new skill vocabulary through tests before relying on it in future scoring.
+Automated Supabase tests:
 
-Unexpected salary result:
+- Use mocked Supabase clients.
+- Validate repository mapping and architectural boundaries.
+- Do not perform live writes.
+- Do not rely on hosted schema state.
 
-- Confirm the salary text uses a supported deterministic format, such as `PHP 80000 - 120000` or `$80k - $120k`.
-- Add new salary fixtures before expanding parser behavior.
+Manual Supabase tests:
 
-## Completion Rule
+- May be run only when explicitly intended by the developer.
+- Require `.env` credentials and applied database schema.
+- Must use repository-backed CLI commands.
+- Must not query Supabase from services, CLI files, or tests outside repository boundaries.
 
-Functional testing is successful when:
+Tables covered by current tests:
 
 ```text
-npm run lint passes
-npm run typecheck passes
-npm test passes
-npm run build passes
-CLI health works
-Manual discovery stores a job
-Parse command creates a parsed job profile
-Score command creates a job match score
-No secrets are printed
-No future-phase behavior is invoked
+jobs
+parsed_job_profiles
+user_profile
+job_match_scores
+user_resume_fragments
 ```
+
+RPC covered by current tests:
+
+```text
+match_resume_fragments()
+```
+
+## LLM / Embedding Provider Testing Strategy
+
+Automated tests:
+
+- Must not make live API calls.
+- Must not require a real `LLM_API_KEY`.
+- Must use fake embedding providers or mocked `fetch`.
+- Must not print provider headers, API keys, or raw credential objects.
+
+Provider configuration tests:
+
+- Verify `LLM_BASE_URL` is used.
+- Verify `LLM_MODEL` is used.
+- Verify the provider is OpenAI-compatible without hardcoding OpenAI or ASI endpoints.
+- Verify provider behavior remains swappable behind `EmbeddingProvider`.
+
+Known provider limitation:
+
+- The current configured ASI/OpenAI-compatible model may not support embeddings.
+- Live fragment creation requires an embedding-capable provider/model.
+- If a provider does not support `/embeddings`, the boundary should fail safely and without exposing secrets.
+
+## Security Test Rules
+
+Never commit:
+
+```text
+.env
+storage/playwright-state
+screenshots
+pdf artifacts
+api keys
+cookies
+service role keys
+```
+
+Test data rules:
+
+- Use fake placeholder secrets only.
+- Do not use real API keys in fixtures.
+- Do not snapshot environment objects.
+- Do not print `SUPABASE_SERVICE_ROLE_KEY`.
+- Do not print `LLM_API_KEY`.
+- Do not print authorization headers.
+- Do not include real provider responses that expose account metadata.
+
+CLI output rules:
+
+- Health output may show environment name only.
+- Commands may show ids, counts, scores, and context text.
+- Commands must not show credentials or full config objects.
+
+## Regression Testing Checklist
+
+Run before requesting phase approval:
+
+```text
+npm run lint
+npm run typecheck
+npm test
+npm run build
+```
+
+Run compiled CLI smoke tests after build:
+
+```text
+node dist\src\cli\index.js --help
+node dist\src\cli\index.js discover --help
+node dist\src\cli\index.js parse --help
+node dist\src\cli\index.js score --help
+node dist\src\cli\index.js fragments --help
+```
+
+Review checklist:
+
+- No future-phase behavior was introduced.
+- No live API calls were added to automated tests.
+- No real secrets were added to tests or docs.
+- Repository boundaries remain intact.
+- CLI files contain no business logic.
+- Deterministic services have direct unit tests.
+- Repository mapping tests still pass.
+- Phase report exists for completed phases.
+- Known limitations are documented.
+- No `git push` was run by Codex.
+
+## Pre-Phase-Approval Checklist
+
+Before approving any phase:
+
+- The phase scope matches `CODEX_MASTER.md`.
+- The implementation follows `CLI -> Use Case -> Service -> Repository -> Database / Integration`.
+- Unit tests cover deterministic behavior.
+- Integration tests cover repository and CLI boundaries.
+- Lint passes.
+- Typecheck passes.
+- Tests pass.
+- Build passes.
+- CLI smoke tests pass when a CLI command exists.
+- Documentation is updated.
+- Phase report is generated under `docs/progress/`.
+- Phase report contains every Section 28 required section.
+- Phase report is committed locally before marking the phase complete.
+- The next phase has not started automatically.
+
+Phase 5 must not begin until the user explicitly approves it.
