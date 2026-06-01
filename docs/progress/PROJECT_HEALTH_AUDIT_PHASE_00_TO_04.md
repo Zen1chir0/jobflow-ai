@@ -585,30 +585,108 @@ Readiness blockers:
 Need stable ResumeJson schema from Phase 5 and verified LaTeX toolchain strategy.
 ```
 
-Phase 7 - ATS Automation
+Phase 7A - ATS Automation Foundation
 
 Purpose:
 
 ```text
-Autofill ATS applications using strategy-specific Playwright workflows.
+Establish ATS automation interfaces, detection, registry, semantic locators, submit guards, path validation, and mock fixture structure.
 ```
 
 Expected value:
 
 ```text
-Reduces manual form-filling effort while preserving human approval before submission.
+Creates the safe foundation for later ATS autofill without live automation.
 ```
 
 Major risks:
 
 ```text
-Brittle selectors, Workday complexity, session handling, accidental submit actions.
+Premature Playwright workflows, weak submit guard, brittle locator abstractions.
 ```
 
 Readiness blockers:
 
 ```text
-Need generated PDFs, strategy registry, mock ATS pages, checkpoint model, and strict human approval guardrails.
+Need generated PDFs, strategy registry, mock ATS pages, and strict human approval guardrails.
+```
+
+Phase 7B - Greenhouse / Lever / Generic Strategies
+
+Purpose:
+
+```text
+Autofill simpler ATS applications against mock Greenhouse, Lever, and Generic fixtures.
+```
+
+Expected value:
+
+```text
+Reduces manual form-filling effort for predictable ATS flows while stopping before submission.
+```
+
+Major risks:
+
+```text
+Brittle selectors, over-aggressive Generic behavior, upload verification gaps.
+```
+
+Readiness blockers:
+
+```text
+Need Phase 7A foundation, mock fixtures, resume PDF artifacts, and human approval guardrails.
+```
+
+Phase 7C - Workday State Machine
+
+Purpose:
+
+```text
+Handle Workday through explicit state-machine navigation and mock multi-step fixtures.
+```
+
+Expected value:
+
+```text
+Isolates the highest-risk ATS behind tested state transitions.
+```
+
+Major risks:
+
+```text
+Dynamic rendering, login/session behavior, modal navigation, checkpoint drift.
+```
+
+Readiness blockers:
+
+```text
+Need Phase 7A foundation, checkpoint boundaries, session handling, and mock Workday fixtures.
+```
+
+Phase 7D - ATS Reliability Hardening
+
+Purpose:
+
+```text
+Harden failure capture, screenshots, sessions, retries, checkpoints, and upload verification.
+```
+
+Expected value:
+
+```text
+Makes ATS automation recoverable and safer before lifecycle and observability phases.
+```
+
+Major risks:
+
+```text
+Sensitive screenshots, session files, noisy retries, incomplete checkpoint recovery.
+```
+
+Readiness blockers:
+
+```text
+Need Phase 7A-7C behavior and ignored local storage paths.
 ```
 
 Phase 8 - Lifecycle
@@ -721,7 +799,7 @@ Product success requirements:
 - Avoid mixing generation, rendering, and ATS concerns.
 - Add schema-driven AI generation in Phase 5.
 - Add reliable artifact rendering in Phase 6.
-- Add conservative ATS automation with human approval in Phase 7.
+- Add ATS automation through Phase 7A-7D with human approval preserved at every subphase.
 - Add lifecycle and observability before claiming full platform readiness.
 - Keep all tests deterministic and provider-mockable.
 

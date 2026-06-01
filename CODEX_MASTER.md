@@ -55,7 +55,10 @@ Core Capabilities:
 4. Resume Intelligence Retrieval
 5. Document Generation
 6. Resume Rendering
-7. ATS Automation
+7A. ATS Automation Foundation
+7B. Greenhouse / Lever / Generic Strategies
+7C. Workday State Machine
+7D. ATS Reliability Hardening
 8. Lifecycle Tracking
 9. Observability
 10. Analytics
@@ -313,22 +316,139 @@ Completion Gate:
 
 ---
 
-## Phase 7
+## Phase 7A
 
-ATS Automation Service
+ATS Automation Foundation
 
 Includes:
 
-* ats registry
-* greenhouse strategy
-* lever strategy
-* generic strategy
-* workday scaffold
+* ATSStrategy interface
+* ATS type detection utilities
+* ATSStrategyRegistry
+* SemanticLocatorService
+* applicant/profile input types
+* resume PDF path validation helper
+* submit guard utility
+* mock ATS HTML fixture structure
+* jobflow apply CLI scaffold
+
+Must NOT include:
+
+* live ATS automation
+* Greenhouse execution strategy
+* Lever execution strategy
+* Generic execution strategy
+* Workday state machine implementation
+* final application submission
 
 Completion Gate:
 
-* strategy tests pass
-* mock ats tests pass
+* detection tests pass
+* registry tests pass
+* semantic locator ordering tests pass
+* submit guard tests pass
+* no strategy can click final submit
+* mock fixture structure exists
+* `node dist\src\cli\index.js apply --help` passes
+
+---
+
+## Phase 7B
+
+Greenhouse / Lever / Generic Strategies
+
+Includes:
+
+* Greenhouse strategy against mock fixture
+* Lever strategy against mock fixture
+* conservative Generic strategy against mock fixture
+* personal information autofill
+* resume upload verification
+* safe screening answer filling
+* human approval stop state
+
+Must NOT include:
+
+* Workday implementation
+* lifecycle state machine
+* observability service
+* analytics service
+* final application submission
+
+Completion Gate:
+
+* Greenhouse mock fixture tests pass
+* Lever mock fixture tests pass
+* Generic mock fixture tests pass
+* upload verification tests pass
+* human approval boundary tests pass
+* no strategy clicks final submit
+
+---
+
+## Phase 7C
+
+Workday State Machine
+
+Includes:
+
+* Workday state enum
+* Workday transition validator
+* Workday page-state detector
+* Workday scaffold strategy
+* mock Workday multi-step fixture
+* login/session-required handling
+* checkpoint boundary for each state
+
+Must NOT include:
+
+* treating Workday as a flat form
+* aggressive live Workday automation claims
+* lifecycle service
+* observability service
+* analytics service
+* final application submission
+
+Completion Gate:
+
+* Workday state transition tests pass
+* Workday mock multi-step fixture tests pass
+* checkpoint boundary tests pass
+* login/session-required handling tests pass
+* no Workday flow clicks final submit
+
+---
+
+## Phase 7D
+
+ATS Reliability Hardening
+
+Includes:
+
+* failure capture boundary
+* screenshot path builder
+* checkpoint persistence or checkpoint repository boundary
+* session storage path handling
+* retry/stability policy
+* upload verification hardening
+* cross-strategy failure tests
+* screenshot/session artifact security review
+
+Must NOT include:
+
+* lifecycle service
+* observability service
+* analytics service
+* final application submission
+
+Completion Gate:
+
+* screenshot path/security tests pass
+* failure handling tests pass
+* session persistence path tests pass
+* recovery/checkpoint tests pass
+* storage artifact security scan passes
+* no final submit action is automated
 
 ---
 
@@ -939,7 +1059,10 @@ PHASE_03_MATCH_SCORING.md
 PHASE_04_RESUME_INTELLIGENCE.md
 PHASE_05_DOCUMENT_GENERATION.md
 PHASE_06_RESUME_RENDERING.md
-PHASE_07_ATS_AUTOMATION.md
+PHASE_07A_ATS_AUTOMATION_FOUNDATION.md
+PHASE_07B_ATS_STRATEGIES.md
+PHASE_07C_WORKDAY_STATE_MACHINE.md
+PHASE_07D_ATS_RELIABILITY_HARDENING.md
 PHASE_08_LIFECYCLE.md
 PHASE_09_OBSERVABILITY.md
 PHASE_10_ANALYTICS.md
@@ -1071,7 +1194,7 @@ Document intentionally deferred work.
 Example:
 
 ```text
-Workday support deferred to Phase 7.
+Workday state-machine support deferred to Phase 7C.
 ```
 
 ---

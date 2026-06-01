@@ -94,6 +94,20 @@ Resume Rendering Service
 
 Application Automation Service
 
+Phase 7A - ATS Automation Foundation
+
+↓
+
+Phase 7B - Greenhouse / Lever / Generic Strategies
+
+↓
+
+Phase 7C - Workday State Machine
+
+↓
+
+Phase 7D - ATS Reliability Hardening
+
 ↓
 
 Lifecycle Service
@@ -578,6 +592,81 @@ Technology:
 
 Playwright
 
+Implementation Structure:
+
+```text
+Phase 7A - ATS Automation Foundation
+Phase 7B - Greenhouse / Lever / Generic Strategies
+Phase 7C - Workday State Machine
+Phase 7D - ATS Reliability Hardening
+```
+
+Phase 7A Responsibilities:
+
+* ATSStrategy interface
+* ATS type detection
+* ATSStrategyRegistry
+* SemanticLocatorService
+* applicant/profile input types
+* resume PDF path validation
+* submit guard
+* mock ATS fixture structure
+* `jobflow apply --help` CLI scaffold
+
+Phase 7A Boundaries:
+
+* no live ATS automation
+* no concrete Greenhouse, Lever, Generic, or Workday execution
+* no final submission
+
+Phase 7B Responsibilities:
+
+* Greenhouse mock-fixture strategy
+* Lever mock-fixture strategy
+* conservative Generic mock-fixture strategy
+* personal information autofill
+* resume upload verification
+* safe screening-answer filling
+* human approval stop state
+
+Phase 7B Boundaries:
+
+* no Workday implementation
+* no final submission
+
+Phase 7C Responsibilities:
+
+* Workday state enum
+* Workday transition validator
+* Workday page-state detector
+* Workday scaffold strategy
+* mock Workday multi-step fixture
+* login/session-required handling
+* checkpoint boundary for each state
+
+Phase 7C Boundaries:
+
+* Workday must not be treated as a flat form
+* no final submission
+
+Phase 7D Responsibilities:
+
+* failure capture boundary
+* screenshot path builder
+* checkpoint persistence or repository boundary
+* session storage path handling
+* retry/stability policy
+* upload verification hardening
+* cross-strategy failure tests
+* screenshot/session artifact security review
+
+Phase 7D Boundaries:
+
+* no lifecycle service
+* no observability service
+* no analytics service
+* no final submission
+
 ---
 
 ATS Strategy Registry
@@ -872,7 +961,10 @@ Included:
 * Match Scoring
 * Resume Generation
 * LaTeX Rendering
-* ATS Autofill
+* Phase 7A ATS Automation Foundation
+* Phase 7B Greenhouse / Lever / Generic Autofill
+* Phase 7C Workday State Machine
+* Phase 7D ATS Reliability Hardening
 * Lifecycle Tracking
 * Observability
 

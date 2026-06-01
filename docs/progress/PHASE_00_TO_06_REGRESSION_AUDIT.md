@@ -347,9 +347,9 @@ No blocking regression issue was found.
 
 ## Recommendations
 
-Before Phase 7 planning:
+Before Phase 7A planning:
 
-- Keep Phase 7 limited to ATS automation planning only until explicitly approved.
+- Keep Phase 7A limited to ATS Automation Foundation planning only until explicitly approved.
 - Treat generated PDF artifacts as local-only and continue ignoring storage output.
 - Add mock ATS pages before any browser automation strategy work.
 - Preserve human approval as the final application boundary.
@@ -399,4 +399,3 @@ Final status:
 ```text
 AWAITING USER APPROVAL
 ```
-

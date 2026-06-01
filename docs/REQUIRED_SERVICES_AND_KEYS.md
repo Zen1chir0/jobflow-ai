@@ -502,17 +502,20 @@ Security Notes:
 
 Purpose:
 
-- ATS automation in Phase 7.
+- ATS automation across Phase 7A-7D.
 - Browser-driven form filling.
 - Mock ATS testing.
 
 Required Phase:
 
-- Phase 7.
+- Phase 7A for foundation and local fixture testing.
+- Phase 7B for Greenhouse / Lever / Generic strategy tests.
+- Phase 7C for Workday state-machine fixture tests.
+- Phase 7D for reliability hardening.
 
 Mandatory or Optional:
 
-- Optional until Phase 7.
+- Optional until Phase 7A.
 - Mandatory once ATS automation begins.
 
 Required Account Type:
@@ -526,7 +529,7 @@ Required Keys / Credentials:
 
 Setup Instructions:
 
-1. Add Playwright dependency when Phase 7 begins.
+1. Add Playwright dependency only when an approved Phase 7A plan requires it.
 2. Install browsers with the official Playwright install command.
 3. Keep mock HTML fixtures for tests.
 4. Do not rely on live job sites for automated tests.
@@ -739,7 +742,7 @@ Before later phases become operational, prepare:
 15. Git.
 16. VS Code or equivalent editor.
 17. Codex workflow access.
-18. Future Playwright setup before Phase 7.
+18. Future Playwright setup before approved Phase 7A work requires it.
 19. Future LaTeX setup before Phase 6.
 20. Future Supabase CLI and Docker setup when database migrations and local infrastructure testing begin.
 

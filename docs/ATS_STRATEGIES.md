@@ -2,7 +2,7 @@
 
 ## ATS Strategies Document
 
-Version: 1.0
+Version: 1.1
 
 Author: Kenneth Flororita
 
@@ -40,7 +40,129 @@ Platform-Specific Execution
 
 ---
 
-# 3. Supported ATS Strategies
+# 3. Approved Phase 7 Split
+
+Phase 7 is no longer a single implementation phase.
+
+Approved structure:
+
+```text
+Phase 7A - ATS Automation Foundation
+Phase 7B - Greenhouse / Lever / Generic Strategies
+Phase 7C - Workday State Machine
+Phase 7D - ATS Reliability Hardening
+```
+
+## Phase 7A - ATS Automation Foundation
+
+Responsibilities:
+
+* define `ATSStrategy`
+* implement ATS type detection utilities
+* implement `ATSStrategyRegistry`
+* implement `SemanticLocatorService`
+* define applicant/profile input types
+* validate resume PDF paths
+* implement submit guard utility
+* create mock ATS HTML fixture structure
+* scaffold `jobflow apply --help`
+
+Boundaries:
+
+* no live ATS automation
+* no Greenhouse, Lever, Generic, or Workday execution
+* no lifecycle, observability, analytics, or final submission
+
+Completion gate:
+
+* detection tests pass
+* registry tests pass
+* semantic locator ordering tests pass
+* submit guard tests pass
+* mock fixture structure exists
+* `node dist\src\cli\index.js apply --help` passes
+
+## Phase 7B - Greenhouse / Lever / Generic Strategies
+
+Responsibilities:
+
+* implement Greenhouse strategy against mock fixture
+* implement Lever strategy against mock fixture
+* implement conservative Generic strategy against mock fixture
+* fill safely resolvable personal information fields
+* upload resume files with verification
+* answer screening questions only when fields are safely resolvable
+* stop at `HUMAN_APPROVAL_REQUIRED`
+
+Boundaries:
+
+* no Workday implementation
+* no final submit action
+* no lifecycle, observability, or analytics service
+
+Completion gate:
+
+* Greenhouse mock fixture tests pass
+* Lever mock fixture tests pass
+* Generic mock fixture tests pass
+* upload verification tests pass
+* human approval boundary tests pass
+
+## Phase 7C - Workday State Machine
+
+Responsibilities:
+
+* define Workday states
+* validate Workday transitions
+* detect Workday page state
+* implement Workday scaffold strategy
+* test against mock Workday multi-step fixture
+* handle login/session-required states
+* create checkpoint boundaries per state
+
+Boundaries:
+
+* Workday must not be automated as a flat form
+* no aggressive production Workday claims
+* no final submit action
+* no lifecycle, observability, or analytics service
+
+Completion gate:
+
+* Workday state transition tests pass
+* Workday mock multi-step fixture tests pass
+* checkpoint boundary tests pass
+* login/session-required handling tests pass
+
+## Phase 7D - ATS Reliability Hardening
+
+Responsibilities:
+
+* implement failure capture boundary
+* implement screenshot path builder
+* implement checkpoint persistence or checkpoint repository boundary
+* handle session storage paths
+* define retry/stability policy
+* harden upload verification
+* add cross-strategy failure tests
+* verify screenshot/session artifact security
+
+Boundaries:
+
+* no final submit action
+* no lifecycle, observability, or analytics service
+
+Completion gate:
+
+* screenshot path/security tests pass
+* failure handling tests pass
+* session persistence path tests pass
+* recovery/checkpoint tests pass
+* storage artifact security scan passes
+
+---
+
+# 4. Supported ATS Strategies
 
 Initial supported strategies:
 
@@ -53,7 +175,7 @@ GenericStrategy
 
 ---
 
-# 4. Strategy Interface
+# 5. Strategy Interface
 
 ```ts
 export interface ATSStrategy {
@@ -77,7 +199,7 @@ export interface ATSStrategy {
 
 ---
 
-# 5. ATS Detection Rules
+# 6. ATS Detection Rules
 
 Detection should be deterministic.
 
@@ -116,7 +238,7 @@ Fallback strategy when no known ATS is detected.
 
 ---
 
-# 6. Greenhouse Strategy
+# 7. Greenhouse Strategy
 
 ## Characteristics
 
@@ -176,7 +298,7 @@ await page.getByLabel(/first name/i).fill(firstName);
 
 ---
 
-# 7. Lever Strategy
+# 8. Lever Strategy
 
 ## Characteristics
 
@@ -216,7 +338,7 @@ Pause Before Submit
 
 ---
 
-# 8. Workday Strategy
+# 9. Workday Strategy
 
 ## Characteristics
 
@@ -235,7 +357,7 @@ Workday must not be automated as a simple flat form.
 
 ---
 
-# 9. Workday State Machine
+# 10. Workday State Machine
 
 Workday automation must use a state machine.
 
@@ -271,7 +393,7 @@ Each state must:
 
 ---
 
-# 10. Workday Synchronization Rules
+# 11. Workday Synchronization Rules
 
 Before processing fields:
 
@@ -303,7 +425,7 @@ await page.waitForTimeout(5000);
 
 ---
 
-# 11. Generic Strategy
+# 12. Generic Strategy
 
 ## Purpose
 
@@ -332,7 +454,7 @@ The GenericStrategy must not:
 
 ---
 
-# 12. Semantic Locator Service
+# 13. Semantic Locator Service
 
 The Semantic Locator Service resolves fields using stable accessibility-first strategies.
 
@@ -388,7 +510,7 @@ throw new Error("Unable to resolve first_name field");
 
 ---
 
-# 13. Field Mapping Layer
+# 14. Field Mapping Layer
 
 Reusable mappings should be stored in the database.
 
@@ -409,7 +531,7 @@ Each mapping contains:
 
 ---
 
-# 14. Session Persistence
+# 15. Session Persistence
 
 Use Playwright storage states.
 
@@ -435,7 +557,7 @@ storage/playwright-state/
 
 ---
 
-# 15. Interaction Stability
+# 16. Interaction Stability
 
 Automation should avoid instant unnatural interaction patterns that may break fragile forms.
 
@@ -459,7 +581,7 @@ The purpose is reliability, not bypassing platform security.
 
 ---
 
-# 16. File Upload Rules
+# 17. File Upload Rules
 
 Resume uploads must:
 
@@ -478,7 +600,7 @@ await expect(page.getByText(/resume.pdf/i)).toBeVisible();
 
 ---
 
-# 17. Human Approval Boundary
+# 18. Human Approval Boundary
 
 Every strategy must stop before final submission.
 
@@ -507,7 +629,7 @@ unless a future explicit manual approval mechanism is implemented.
 
 ---
 
-# 18. Checkpointing
+# 19. Checkpointing
 
 Each major ATS step must persist a checkpoint.
 
@@ -533,7 +655,7 @@ automation_checkpoints
 
 ---
 
-# 19. Error Handling
+# 20. Error Handling
 
 On failure, the strategy must:
 
@@ -556,7 +678,7 @@ Example:
 
 ---
 
-# 20. Screenshots
+# 21. Screenshots
 
 Screenshots must be stored under:
 
@@ -578,7 +700,11 @@ exec_123_workday_upload_resume.png
 
 ---
 
-# 21. Testing Strategy
+# 22. Testing Strategy
+
+Phase 7 testing must be mock-first and fixture-driven.
+
+Automated tests must not use live job sites, real ATS credentials, or real browser sessions.
 
 ## Unit Tests
 
@@ -587,6 +713,13 @@ Test:
 * ATS detection
 * field mapping resolution
 * state transition validation
+* strategy registry resolution
+* semantic locator fallback priority
+* submit guard behavior
+* resume upload path validation
+* Workday transition validation
+* checkpoint payload construction
+* screenshot path generation
 
 ## Integration Tests
 
@@ -596,6 +729,8 @@ Use mock HTML pages for:
 * Lever
 * Workday
 * Generic
+* resume upload fixture
+* human approval stop state
 
 ## E2E Tests
 
@@ -603,9 +738,11 @@ Test full automation flow against local static HTML fixtures.
 
 Do not rely on live job sites for automated tests.
 
+Do not use Playwright against external ATS pages in automated tests.
+
 ---
 
-# 22. Non-Negotiables
+# 23. Non-Negotiables
 
 1. Do not create one universal ATS script.
 2. Do not click final submit.
@@ -620,13 +757,13 @@ Do not rely on live job sites for automated tests.
 
 ---
 
-# 23. MVP ATS Scope
+# 24. MVP ATS Scope
 
-MVP must support:
+MVP ATS automation is delivered through the Phase 7A-7D split:
 
-* Greenhouse basic autofill
-* Lever basic autofill
-* Generic conservative autofill
-* Workday partial state machine scaffold
+* Phase 7A: ATS foundation and safe `jobflow apply` CLI scaffold
+* Phase 7B: Greenhouse basic autofill, Lever basic autofill, and Generic conservative autofill
+* Phase 7C: Workday partial state-machine scaffold
+* Phase 7D: reliability hardening, failure capture, screenshots, sessions, checkpoints, and upload verification
 
-Workday full support can be completed after basic ATS strategies are stable.
+Workday full support can be completed only after Phase 7C and Phase 7D gates are satisfied.

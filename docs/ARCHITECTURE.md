@@ -570,6 +570,35 @@ export class GenerateResumeUseCase {
 
 All ATS-specific behavior must be isolated behind a common interface.
 
+ATS automation is implemented through four approved subphases:
+
+```text
+Phase 7A - ATS Automation Foundation
+Phase 7B - Greenhouse / Lever / Generic Strategies
+Phase 7C - Workday State Machine
+Phase 7D - ATS Reliability Hardening
+```
+
+Phase 7A establishes the strategy interface, registry, semantic locator layer, submit guard, path validation, and mock fixture structure. It must not perform live ATS automation.
+
+Phase 7B implements Greenhouse, Lever, and conservative Generic strategies against local mock fixtures only. It must always stop at the human approval boundary and must not implement Workday.
+
+Phase 7C implements Workday state-machine behavior against mock multi-step fixtures. Workday must not be treated as a flat form.
+
+Phase 7D hardens failure capture, screenshot paths, session storage paths, checkpoint recovery, retry policy, and upload verification. It must not introduce lifecycle, observability, analytics, or final submission.
+
+Required automation flow:
+
+```text
+CLI
+Use Case
+ATSAutomationService
+ATSStrategyRegistry
+Resolved ATSStrategy
+Semantic Locator / Session / File Upload / Checkpoint helpers
+Human Approval Required
+```
+
 ```ts
 export interface ATSStrategy {
   type: ATSType;
@@ -917,14 +946,13 @@ Build in this order:
 10. Resume retrieval
 11. Document generation
 12. LaTeX rendering
-13. ATS strategy registry
-14. Greenhouse strategy
-15. Lever strategy
-16. Generic strategy
-17. Workday strategy
-18. Lifecycle service
-19. Observability service
-20. Analytics service
+13. Phase 7A - ATS automation foundation
+14. Phase 7B - Greenhouse / Lever / Generic strategies
+15. Phase 7C - Workday state machine
+16. Phase 7D - ATS reliability hardening
+17. Lifecycle service
+18. Observability service
+19. Analytics service
 
 ---
 
@@ -966,7 +994,10 @@ and the system can:
 * rank them
 * generate tailored resume JSON
 * render LaTeX PDF resumes
-* autofill ATS applications
+* scaffold ATS automation safely through Phase 7A
+* autofill Greenhouse, Lever, and conservative Generic applications through Phase 7B
+* handle Workday through a state-machine strategy in Phase 7C
+* recover from ATS automation failures through Phase 7D
 * stop before submission
 * track lifecycle state
 * log failures

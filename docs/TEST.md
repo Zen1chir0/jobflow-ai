@@ -14,7 +14,7 @@ Phase 05 - Document Generation
 Phase 06 - Resume Rendering
 ```
 
-Future phases are intentionally excluded.
+Phase 7A-7D testing expectations are documented as future gate requirements only. They do not authorize implementation before explicit user approval.
 
 This document must not be used to justify ATS automation, lifecycle, observability service, or analytics work.
 
@@ -588,6 +588,14 @@ Mock PDF compilers:
 - Automated tests must not require a local LaTeX installation.
 - Generated artifact fixtures must stay under temporary directories or ignored storage paths.
 
+Mock ATS automation:
+
+- Phase 7A-7D automated tests must use local mock ATS fixtures only.
+- Tests must not use live ATS websites.
+- Tests must not require real ATS credentials or browser sessions.
+- Playwright, when introduced in an approved Phase 7 subphase, must be used only against local fixtures in automated tests.
+- Submit guards must be tested so no automated path can click final submit.
+
 Mock Supabase clients in repository tests:
 
 - Repository tests should verify table names, payload shape, filters, upserts, inserts, updates, and RPC arguments.
@@ -651,6 +659,96 @@ Known provider limitation:
 - Live fragment creation requires an embedding-capable provider/model.
 - If a provider does not support `/embeddings`, the boundary should fail safely and without exposing secrets.
 
+## Planned Phase 7A-7D ATS Testing Strategy
+
+This section records future testing expectations for the approved ATS split. It is not current implementation scope.
+
+### Phase 7A - ATS Automation Foundation
+
+Automated coverage must include:
+
+- ATS type detection rules
+- `ATSStrategyRegistry` resolution
+- `SemanticLocatorService` locator priority
+- submit guard behavior
+- resume PDF path validation
+- applicant/profile input validation
+- mock ATS HTML fixture structure
+- `jobflow apply --help` compiled smoke test
+
+Completion gate:
+
+```bash
+npm run lint
+npm run typecheck
+npm test
+npm run build
+node dist\src\cli\index.js apply --help
+```
+
+### Phase 7B - Greenhouse / Lever / Generic Strategies
+
+Automated coverage must include:
+
+- Greenhouse mock fixture autofill
+- Lever mock fixture autofill
+- conservative Generic mock fixture autofill
+- resume upload verification
+- safe screening-answer fill behavior
+- human approval stop state
+- final-submit guard behavior for every strategy
+
+Completion gate:
+
+```bash
+npm run lint
+npm run typecheck
+npm test
+npm run build
+```
+
+### Phase 7C - Workday State Machine
+
+Automated coverage must include:
+
+- Workday state enum and transition validation
+- Workday page-state detection
+- Workday mock multi-step fixture flow
+- login/session-required handling
+- checkpoint boundary construction
+- final-submit guard behavior
+
+Completion gate:
+
+```bash
+npm run lint
+npm run typecheck
+npm test
+npm run build
+```
+
+### Phase 7D - ATS Reliability Hardening
+
+Automated coverage must include:
+
+- failure capture boundary
+- screenshot path generation and ignored storage validation
+- session storage path generation and ignored storage validation
+- checkpoint persistence or checkpoint repository boundary
+- retry/stability policy behavior
+- upload verification hardening
+- cross-strategy failure cases
+- security scan confirming no screenshots, sessions, cookies, or uploaded artifacts are tracked
+
+Completion gate:
+
+```bash
+npm run lint
+npm run typecheck
+npm test
+npm run build
+```
+
 ## Security Test Rules
 
 Never commit:
@@ -658,6 +756,7 @@ Never commit:
 ```text
 .env
 storage/playwright-state
+storage/screenshots
 screenshots
 pdf artifacts
 api keys
@@ -737,4 +836,4 @@ Before approving any phase:
 - Phase report is committed locally before marking the phase complete.
 - The next phase has not started automatically.
 
-Phase 5 must not begin until the user explicitly approves it.
+Phase 7A must not begin until the user explicitly approves it.

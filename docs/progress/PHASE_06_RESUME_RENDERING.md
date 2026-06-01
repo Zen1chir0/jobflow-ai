@@ -342,11 +342,10 @@ No additional ResumeJson schema change is required for Phase 6.
 
 ## Next Phase Prerequisites
 
-Before Phase 7 starts:
+Before Phase 7A starts:
 
-- User must explicitly approve Phase 7 progression.
+- User must explicitly approve Phase 7A progression.
 - Phase 6 report must be committed to the repository.
-- Phase 7 implementation must remain limited to ATS Automation scope.
-- Phase 7 may add ATS strategy interfaces, strategy registry, and mock ATS tests.
-- Phase 7 must not implement lifecycle, observability service, analytics, or automatic application submission.
-
+- Phase 7A implementation must remain limited to ATS Automation Foundation scope.
+- Phase 7A may add ATS strategy interfaces, strategy registry, semantic locator foundations, submit guards, path validation, CLI scaffold, and mock ATS fixture structure.
+- Phase 7A must not implement live ATS automation, concrete Greenhouse/Lever/Generic execution, Workday state-machine execution, lifecycle, observability service, analytics, or automatic application submission.
