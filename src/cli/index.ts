@@ -1,8 +1,11 @@
 #!/usr/bin/env node
 
 import { Command } from "commander";
+import { normalize } from "node:path";
+import { fileURLToPath } from "node:url";
 
-import { loadEnv } from "../config/env";
+import { createDiscoverCommand } from "./commands/discover.command.js";
+import { loadEnv } from "../config/env.js";
 
 export function buildCli(): Command {
   const program = new Command();
@@ -18,9 +21,11 @@ export function buildCli(): Command {
     console.log(`JobFlow AI ready (${env.nodeEnv})`);
   });
 
+  program.addCommand(createDiscoverCommand());
+
   return program;
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (process.argv[1] && normalize(fileURLToPath(import.meta.url)) === normalize(process.argv[1])) {
   await buildCli().parseAsync(process.argv);
 }

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { ApplicationError } from "../../../src/domain/errors/application-error";
+import { ApplicationError } from "../../../src/domain/errors/application-error.js";
 
 describe("ApplicationError", () => {
   it("preserves the stable application error code", () => {

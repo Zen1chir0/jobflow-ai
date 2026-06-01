@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 
-import { createLogger, type LoggerSink } from "../../../src/utils/logger";
+import { createLogger, type LoggerSink } from "../../../src/utils/logger.js";
 
 describe("createLogger", () => {
   it("writes structured entries at or above the configured level", () => {

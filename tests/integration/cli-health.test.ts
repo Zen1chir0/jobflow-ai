@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 
-import { buildCli } from "../../src/cli/index";
+import { buildCli } from "../../src/cli/index.js";
 
 describe("jobflow health command", () => {
   it("validates runtime config and displays readiness", async () => {

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { createSupabaseClient } from "../../../src/integrations/supabase/supabase.client";
+import { createSupabaseClient } from "../../../src/integrations/supabase/supabase.client.js";
 
 describe("createSupabaseClient", () => {
   it("creates a Supabase client shell from typed environment config", () => {

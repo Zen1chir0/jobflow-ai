@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import { loadEnv } from "../../../src/config/env";
-import { ApplicationError } from "../../../src/domain/errors/application-error";
+import { loadEnv } from "../../../src/config/env.js";
+import { ApplicationError } from "../../../src/domain/errors/application-error.js";
 
 describe("loadEnv", () => {
   it("loads required configuration with defaults", () => {

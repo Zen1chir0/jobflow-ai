@@ -1,7 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 
-import { loadEnv, type AppEnv } from "../../config/env";
-import { ApplicationError } from "../../domain/errors/application-error";
+import { loadEnv, type AppEnv } from "../../config/env.js";
+import { ApplicationError } from "../../domain/errors/application-error.js";
 
 export type JobFlowSupabaseClient = ReturnType<typeof createClient>;
 

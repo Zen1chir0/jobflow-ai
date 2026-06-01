@@ -1,6 +1,6 @@
-import { DEFAULT_LOG_LEVEL, SUPPORTED_NODE_ENVIRONMENTS } from "./constants";
-import { ApplicationError } from "../domain/errors/application-error";
-import type { LogLevel } from "../utils/logger";
+import { DEFAULT_LOG_LEVEL, SUPPORTED_NODE_ENVIRONMENTS } from "./constants.js";
+import { ApplicationError } from "../domain/errors/application-error.js";
+import type { LogLevel } from "../utils/logger.js";
 
 export type NodeEnvironment = (typeof SUPPORTED_NODE_ENVIRONMENTS)[number];
 
