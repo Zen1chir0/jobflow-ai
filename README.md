@@ -4,7 +4,7 @@ JobFlow AI is a CLI-first Job Application Orchestration Platform built with a st
 
 ## Current Status
 
-Phase 0 foundation scaffold.
+Phase 3 deterministic match scoring.
 
 ## Commands
 
@@ -26,6 +26,12 @@ Deterministic parsing smoke command:
 
 ```bash
 jobflow parse --job-id <job_id>
+```
+
+Deterministic scoring smoke command:
+
+```bash
+jobflow score --job-id <job_id>
 ```
 
 ## Architecture Rule

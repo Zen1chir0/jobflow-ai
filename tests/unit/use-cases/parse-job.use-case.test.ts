@@ -21,7 +21,8 @@ describe("ParseJobUseCase", () => {
       markParsed
     };
     const parsedRepository: ParsedJobProfileRepository = {
-      upsert: parsedUpsert
+      upsert: parsedUpsert,
+      findByJobId: vi.fn()
     };
     const parsingService = {
       parse: vi.fn().mockReturnValue(parsedProfile)

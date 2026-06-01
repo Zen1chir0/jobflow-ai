@@ -43,10 +43,20 @@ type SupabaseSingleResult = {
   error: PostgrestError | null;
 };
 
+type SupabaseMaybeSingleResult = {
+  data: ParsedJobProfileRow | null;
+  error: PostgrestError | null;
+};
+
 type ParsedJobProfileTableClient = {
   upsert(payload: ParsedJobProfilePayload, options: { onConflict: string }): {
     select(columns: string): {
       single(): Promise<SupabaseSingleResult>;
+    };
+  };
+  select(columns: string): {
+    eq(column: string, value: string): {
+      maybeSingle(): Promise<SupabaseMaybeSingleResult>;
     };
   };
 };
@@ -57,6 +67,7 @@ export type SupabaseParsedJobProfileClient = {
 
 export interface ParsedJobProfileRepository {
   upsert(profile: NewParsedJobProfile): Promise<ParsedJobProfile>;
+  findByJobId(jobId: string): Promise<ParsedJobProfile | null>;
 }
 
 export class SupabaseParsedJobProfileRepository implements ParsedJobProfileRepository {
@@ -82,6 +93,22 @@ export class SupabaseParsedJobProfileRepository implements ParsedJobProfileRepos
     }
 
     return fromRow(result.data);
+  }
+
+  async findByJobId(jobId: string): Promise<ParsedJobProfile | null> {
+    const result = await this.client
+      .from("parsed_job_profiles")
+      .select("*")
+      .eq("job_id", jobId)
+      .maybeSingle();
+
+    if (result.error) {
+      throw new ApplicationError("PARSED_JOB_PROFILE_REPOSITORY_ERROR", "Unable to find parsed job profile", {
+        cause: result.error
+      });
+    }
+
+    return result.data ? fromRow(result.data) : null;
   }
 }
 

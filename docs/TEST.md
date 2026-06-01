@@ -7,6 +7,7 @@ Implemented scope covered here:
 - Phase 0: foundation, config loading, CLI health
 - Phase 1: job discovery pipeline
 - Phase 2: deterministic job parsing pipeline
+- Phase 3: deterministic match scoring pipeline
 
 Future phases are intentionally excluded.
 
@@ -167,14 +168,73 @@ Validation:
 - Parsed jobs should receive corresponding `parsed_job_profiles` rows.
 - Parsed jobs should have `parsed_at` populated after parsing.
 
-## What Phase 2 Does Not Test
+## Phase 3 Functional Test: Score One Parsed Job
+
+Use a real `job_id` that exists in both:
+
+- `jobs`
+- `parsed_job_profiles`
+
+Confirm the `user_profile` table has one seeded profile with:
+
+- `verified_skills`
+- `target_industries`
+- `preferred_remote_types`
+- `minimum_salary`
+- `salary_currency`
+- `baseline_seniority`
+
+Run:
+
+```bash
+node dist\src\cli\index.js score --job-id <job_id>
+```
+
+Expected result:
+
+```text
+Scored job <job_id>: <final_score>
+skill=<score> experience=<score> industry=<score> location=<score> compensation=<score>
+```
+
+Validation in Supabase:
+
+- Open the `job_match_scores` table.
+- Confirm a row exists with:
+  - `job_id`: the scored job id
+  - `skill_match`: numeric value from 0 to 100
+  - `experience_match`: numeric value from 0 to 100
+  - `industry_match`: numeric value from 0 to 100
+  - `location_match`: numeric value from 0 to 100
+  - `compensation_match`: numeric value from 0 to 100
+  - `final_score`: weighted score from 0 to 100
+  - `scoring_metadata`: JSON object with component metadata
+
+Expected formula:
+
+```text
+final_score =
+(skill_match * 0.40) +
+(experience_match * 0.25) +
+(industry_match * 0.10) +
+(location_match * 0.10) +
+(compensation_match * 0.15)
+```
+
+Repeat the same command.
+
+Expected result:
+
+- The repository should upsert by `job_id`.
+- The table should not create duplicate score rows for the same job.
+
+## What Phase 3 Does Not Test
 
 The current parser does not:
 
 - call live LLM APIs
 - call live embedding APIs
 - generate resumes
-- score jobs
 - rank jobs
 - render PDFs
 - automate ATS applications
@@ -209,6 +269,7 @@ Build and inspect command help:
 npm run build
 node dist\src\cli\index.js discover --help
 node dist\src\cli\index.js parse --help
+node dist\src\cli\index.js score --help
 ```
 
 ## Troubleshooting
@@ -229,6 +290,16 @@ Parse command reports job not found:
 
 - Confirm the `job_id` exists in the `jobs` table.
 - Confirm you are using the correct Supabase project.
+
+Score command reports parsed job profile not found:
+
+- Run `parse --job-id <job_id>` first.
+- Confirm `parsed_job_profiles.job_id` matches the job id.
+
+Score command reports user profile not found:
+
+- Confirm the seed `user_profile` row exists.
+- Confirm the table is in the same Supabase project configured by `.env`.
 
 No required skills extracted:
 
@@ -252,7 +323,7 @@ npm run build passes
 CLI health works
 Manual discovery stores a job
 Parse command creates a parsed job profile
+Score command creates a job match score
 No secrets are printed
 No future-phase behavior is invoked
 ```
-
