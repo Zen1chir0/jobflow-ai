@@ -719,6 +719,71 @@ similarityThreshold = 0.72
 
 # 14. Resume Rendering Architecture
 
+# 14A. Provider-Agnostic LLM Architecture
+
+LLM integrations must be provider-agnostic.
+
+Business logic must never know whether the underlying provider is:
+
+```text
+OpenAI
+ASI Cloud
+OpenRouter
+Anthropic
+Future Provider
+```
+
+All future generation workflows should depend on an `LLMProvider` interface, not directly on a vendor SDK.
+
+Recommended flow:
+
+```text
+LLMProvider Interface
+↓
+OpenAICompatibleProvider
+↓
+DocumentGenerationService
+```
+
+OpenAI-compatible providers may use the OpenAI SDK interface with custom configuration:
+
+```ts
+const client = new OpenAI({
+  apiKey: process.env.LLM_API_KEY,
+  baseURL: process.env.LLM_BASE_URL
+});
+```
+
+Example provider configuration:
+
+```text
+Provider: ASI Cloud
+Base URL: https://inference.asicloud.cudos.org/v1
+Model: openai/gpt-oss-120b
+```
+
+Required future environment variables:
+
+```text
+LLM_PROVIDER
+LLM_BASE_URL
+LLM_API_KEY
+LLM_MODEL
+```
+
+Rules:
+
+1. Do not hardcode OpenAI endpoints.
+2. Model selection must be configurable.
+3. Base URL must be configurable.
+4. API key must be configurable.
+5. Future providers must be swappable without changing business logic.
+6. Provider implementations are responsible for translating configuration into the correct SDK client.
+
+This architecture must not be implemented before the appropriate LLM-related phase.
+
+---
+
 LLM output must be structured JSON.
 
 The LaTeX renderer owns formatting.

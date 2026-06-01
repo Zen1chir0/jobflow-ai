@@ -22,6 +22,12 @@ Manual discovery smoke command:
 jobflow discover --source manual --title "QA Automation Engineer" --company "Example Co" --url "https://example.com/jobs/qa" --description "Build and maintain automated tests."
 ```
 
+Deterministic parsing smoke command:
+
+```bash
+jobflow parse --job-id <job_id>
+```
+
 ## Architecture Rule
 
 All executable workflows must follow:

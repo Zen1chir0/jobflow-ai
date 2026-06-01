@@ -52,6 +52,20 @@ type SupabaseMaybeSingleResult = {
   error: PostgrestError | null;
 };
 
+type SupabaseListResult = {
+  data: JobRow[] | null;
+  error: PostgrestError | null;
+};
+
+type SupabaseUpdateResult = {
+  error: PostgrestError | null;
+};
+
+type JobUpdatePayload = {
+  parsed_at?: string;
+  description_clean?: string;
+};
+
 type JobTableClient = {
   upsert(payload: JobPayload, options: { onConflict: string }): {
     select(columns: string): {
@@ -62,6 +76,14 @@ type JobTableClient = {
     eq(column: string, value: string): {
       maybeSingle(): Promise<SupabaseMaybeSingleResult>;
     };
+    is(column: string, value: null): {
+      order(column: string, options: { ascending: boolean }): {
+        limit(count: number): Promise<SupabaseListResult>;
+      };
+    };
+  };
+  update(payload: JobUpdatePayload): {
+    eq(column: string, value: string): Promise<SupabaseUpdateResult>;
   };
 };
 
@@ -72,6 +94,8 @@ export type SupabaseJobClient = {
 export interface JobRepository {
   upsert(job: NewJob): Promise<Job>;
   findById(id: string): Promise<Job | null>;
+  findUnparsed(limit?: number): Promise<Job[]>;
+  markParsed(jobId: string, parsedAt?: string, descriptionClean?: string): Promise<void>;
 }
 
 export class SupabaseJobRepository implements JobRepository {
@@ -103,6 +127,35 @@ export class SupabaseJobRepository implements JobRepository {
     }
 
     return result.data ? fromJobRow(result.data) : null;
+  }
+
+  async findUnparsed(limit = 20): Promise<Job[]> {
+    const result = await this.client
+      .from("jobs")
+      .select("*")
+      .is("parsed_at", null)
+      .order("discovered_at", { ascending: true })
+      .limit(limit);
+
+    if (result.error) {
+      throw new ApplicationError("JOB_REPOSITORY_ERROR", "Unable to find unparsed jobs", { cause: result.error });
+    }
+
+    return (result.data ?? []).map(fromJobRow);
+  }
+
+  async markParsed(jobId: string, parsedAt = new Date().toISOString(), descriptionClean?: string): Promise<void> {
+    const result = await this.client
+      .from("jobs")
+      .update({
+        parsed_at: parsedAt,
+        ...(descriptionClean ? { description_clean: descriptionClean } : {})
+      })
+      .eq("id", jobId);
+
+    if (result.error) {
+      throw new ApplicationError("JOB_REPOSITORY_ERROR", "Unable to mark job parsed", { cause: result.error });
+    }
   }
 }
 

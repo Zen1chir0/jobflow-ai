@@ -5,6 +5,7 @@ import { normalize } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { createDiscoverCommand } from "./commands/discover.command.js";
+import { createParseCommand } from "./commands/parse.command.js";
 import { loadEnv } from "../config/env.js";
 
 export function buildCli(): Command {
@@ -22,6 +23,7 @@ export function buildCli(): Command {
   });
 
   program.addCommand(createDiscoverCommand());
+  program.addCommand(createParseCommand());
 
   return program;
 }

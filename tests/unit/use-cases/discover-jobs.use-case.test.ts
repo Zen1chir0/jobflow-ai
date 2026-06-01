@@ -19,7 +19,9 @@ describe("DiscoverJobsUseCase", () => {
     } as unknown as JobDiscoveryService;
     const repository: JobRepository = {
       upsert,
-      findById: vi.fn()
+      findById: vi.fn(),
+      findUnparsed: vi.fn(),
+      markParsed: vi.fn()
     };
     const useCase = new DiscoverJobsUseCase(discoveryService, repository);
 
