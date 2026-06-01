@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 
 import { createDiscoverCommand } from "./commands/discover.command.js";
 import { createFragmentsCommand } from "./commands/fragments.command.js";
+import { createGenerateCommand } from "./commands/generate.command.js";
 import { createParseCommand } from "./commands/parse.command.js";
 import { createScoreCommand } from "./commands/score.command.js";
 import { loadEnv } from "../config/env.js";
@@ -28,6 +29,7 @@ export function buildCli(): Command {
   program.addCommand(createParseCommand());
   program.addCommand(createScoreCommand());
   program.addCommand(createFragmentsCommand());
+  program.addCommand(createGenerateCommand());
 
   return program;
 }

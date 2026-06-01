@@ -4,7 +4,7 @@ JobFlow AI is a CLI-first Job Application Orchestration Platform built with a st
 
 ## Current Status
 
-Phase 4 resume intelligence retrieval.
+Phase 5 structured document generation.
 
 ## Commands
 
@@ -40,6 +40,17 @@ Resume fragment smoke commands:
 jobflow fragments add --type project --text "Built a Playwright automation framework." --source-label "Example Project"
 jobflow fragments context --job-id <job_id>
 ```
+
+Structured document generation smoke commands:
+
+```bash
+jobflow generate resume --job-id <job_id>
+jobflow generate cover-letter --job-id <job_id>
+jobflow generate recruiter-message --job-id <job_id>
+jobflow generate screening-response --job-id <job_id> --question "Why are you a fit for this role?"
+```
+
+Generation creates structured JSON artifacts only. It does not render LaTeX, create PDFs, automate ATS forms, or submit applications.
 
 ## Architecture Rule
 

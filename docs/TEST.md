@@ -10,11 +10,12 @@ Phase 01 - Job Discovery
 Phase 02 - Job Parsing
 Phase 03 - Match Scoring
 Phase 04 - Resume Intelligence
+Phase 05 - Document Generation
 ```
 
 Future phases are intentionally excluded.
 
-This document must not be used to justify Phase 5 document generation, LaTeX rendering, ATS automation, lifecycle, observability service, or analytics work.
+This document must not be used to justify LaTeX rendering, PDF generation, ATS automation, lifecycle, observability service, or analytics work.
 
 ## Testing Philosophy
 
@@ -52,6 +53,7 @@ node dist\src\cli\index.js discover --help
 node dist\src\cli\index.js parse --help
 node dist\src\cli\index.js score --help
 node dist\src\cli\index.js fragments --help
+node dist\src\cli\index.js generate --help
 ```
 
 Targeted automated test commands:
@@ -62,8 +64,9 @@ npm test -- tests/unit/services/discovery
 npm test -- tests/unit/services/parsing
 npm test -- tests/unit/services/scoring
 npm test -- tests/unit/services/resume-intelligence
+npm test -- tests/unit/services/document-generation
 npm test -- tests/integration/repositories
-npm test -- tests/integration/cli-discover.test.ts tests/integration/cli-parse.test.ts tests/integration/cli-score.test.ts tests/integration/cli-fragments.test.ts
+npm test -- tests/integration/cli-discover.test.ts tests/integration/cli-parse.test.ts tests/integration/cli-score.test.ts tests/integration/cli-fragments.test.ts tests/integration/cli-generate.test.ts
 ```
 
 ## Test Layers
@@ -312,6 +315,58 @@ Provider caveat:
 - The configured provider/model must support embeddings for live fragment creation.
 - Automated tests use fake providers and do not make live API calls.
 
+### Phase 05 - Document Generation
+
+Automated coverage:
+
+- OpenAI-compatible generation provider configuration
+- No live generation provider calls in tests
+- Resume JSON prompt construction
+- Cover letter prompt construction
+- Recruiter message prompt construction
+- Screening response prompt construction
+- Schema validation for all generated artifact types
+- Hallucination prevention for unsupported generated claims
+- Output normalization for provider JSON objects
+- Document generation service orchestration
+- Generated document repository insert mapping
+- Generate document use case orchestration
+- `generate resume` CLI parsing and output
+- `generate cover-letter` CLI parsing and output
+- `generate recruiter-message` CLI parsing and output
+- `generate screening-response` CLI parsing and output
+
+Representative tests:
+
+```text
+tests/unit/integrations/openai-compatible-generation-provider.test.ts
+tests/unit/services/document-generation/prompt-builders.test.ts
+tests/unit/services/document-generation/validators.test.ts
+tests/unit/services/document-generation/hallucination-guard.test.ts
+tests/unit/services/document-generation/document-generation.service.test.ts
+tests/unit/use-cases/generate-document.use-case.test.ts
+tests/integration/repositories/generated-document.repository.test.ts
+tests/integration/cli-generate.test.ts
+```
+
+Manual functional commands:
+
+```bash
+node dist\src\cli\index.js generate resume --job-id <job_id>
+node dist\src\cli\index.js generate cover-letter --job-id <job_id>
+node dist\src\cli\index.js generate recruiter-message --job-id <job_id>
+node dist\src\cli\index.js generate screening-response --job-id <job_id> --question "Why are you a fit for this role?"
+```
+
+Expected checks:
+
+- Rows are stored in `generated_documents`.
+- `document_type` is one of `resume_json`, `cover_letter`, `recruiter_message`, or `screening_response`.
+- `context_fragments` references retrieved Phase 4 fragment ids.
+- Generated content is structured JSON only.
+- Unsupported claims are rejected before persistence.
+- No LaTeX rendering, PDF generation, ATS automation, lifecycle, observability service, analytics, or application submission is performed.
+
 ## Unit Test Inventory
 
 Foundation:
@@ -368,6 +423,17 @@ tests/unit/use-cases/create-resume-fragment.use-case.test.ts
 tests/unit/use-cases/retrieve-resume-context.use-case.test.ts
 ```
 
+Document generation:
+
+```text
+tests/unit/integrations/openai-compatible-generation-provider.test.ts
+tests/unit/services/document-generation/prompt-builders.test.ts
+tests/unit/services/document-generation/validators.test.ts
+tests/unit/services/document-generation/hallucination-guard.test.ts
+tests/unit/services/document-generation/document-generation.service.test.ts
+tests/unit/use-cases/generate-document.use-case.test.ts
+```
+
 ## Integration Test Inventory
 
 Repository integration tests with mocked Supabase clients:
@@ -378,6 +444,7 @@ tests/integration/repositories/parsed-job-profile.repository.test.ts
 tests/integration/repositories/job-match-score.repository.test.ts
 tests/integration/repositories/user-profile.repository.test.ts
 tests/integration/repositories/resume-fragment.repository.test.ts
+tests/integration/repositories/generated-document.repository.test.ts
 ```
 
 CLI integration tests with mocked use cases:
@@ -388,6 +455,7 @@ tests/integration/cli-discover.test.ts
 tests/integration/cli-parse.test.ts
 tests/integration/cli-score.test.ts
 tests/integration/cli-fragments.test.ts
+tests/integration/cli-generate.test.ts
 ```
 
 ## CLI Smoke Test Inventory
@@ -400,6 +468,7 @@ node dist\src\cli\index.js discover --help
 node dist\src\cli\index.js parse --help
 node dist\src\cli\index.js score --help
 node dist\src\cli\index.js fragments --help
+node dist\src\cli\index.js generate --help
 ```
 
 Manual functional command inventory:
@@ -412,6 +481,10 @@ node dist\src\cli\index.js parse --all --limit 5
 node dist\src\cli\index.js score --job-id <job_id>
 node dist\src\cli\index.js fragments add --type project --text "Built a Playwright automation framework." --source-label "Example Project"
 node dist\src\cli\index.js fragments context --job-id <job_id>
+node dist\src\cli\index.js generate resume --job-id <job_id>
+node dist\src\cli\index.js generate cover-letter --job-id <job_id>
+node dist\src\cli\index.js generate recruiter-message --job-id <job_id>
+node dist\src\cli\index.js generate screening-response --job-id <job_id> --question "Why are you a fit for this role?"
 ```
 
 ## Mocking Strategy
@@ -431,6 +504,13 @@ Mock embedding providers:
 - Resume intelligence service tests must inject fake `EmbeddingProvider` implementations.
 - Provider tests may mock `fetch`.
 - No automated test may call a live embedding endpoint.
+
+Mock generation providers:
+
+- Document generation service tests must inject fake `GenerationProvider` implementations.
+- Provider tests may mock `fetch`.
+- No automated test may call a live chat completion endpoint.
+- Generated content fixtures must use fake, evidence-backed data only.
 
 Mock Supabase clients in repository tests:
 
@@ -461,6 +541,7 @@ parsed_job_profiles
 user_profile
 job_match_scores
 user_resume_fragments
+generated_documents
 ```
 
 RPC covered by current tests:
@@ -469,13 +550,14 @@ RPC covered by current tests:
 match_resume_fragments()
 ```
 
-## LLM / Embedding Provider Testing Strategy
+## LLM / Embedding / Generation Provider Testing Strategy
 
 Automated tests:
 
 - Must not make live API calls.
 - Must not require a real `LLM_API_KEY`.
 - Must use fake embedding providers or mocked `fetch`.
+- Must use fake generation providers or mocked `fetch`.
 - Must not print provider headers, API keys, or raw credential objects.
 
 Provider configuration tests:
@@ -484,6 +566,7 @@ Provider configuration tests:
 - Verify `LLM_MODEL` is used.
 - Verify the provider is OpenAI-compatible without hardcoding OpenAI or ASI endpoints.
 - Verify provider behavior remains swappable behind `EmbeddingProvider`.
+- Verify generation behavior remains swappable behind `GenerationProvider`.
 
 Known provider limitation:
 
@@ -540,6 +623,7 @@ node dist\src\cli\index.js discover --help
 node dist\src\cli\index.js parse --help
 node dist\src\cli\index.js score --help
 node dist\src\cli\index.js fragments --help
+node dist\src\cli\index.js generate --help
 ```
 
 Review checklist:
