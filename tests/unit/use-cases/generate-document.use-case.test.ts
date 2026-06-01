@@ -33,7 +33,7 @@ describe("GenerateResumeJsonUseCase", () => {
       { findDefault: vi.fn().mockResolvedValue(input.userProfile) },
       { createFragment: vi.fn(), retrieveContext } as never,
       { generate } as never,
-      { create }
+      { create, findById: vi.fn() }
     );
 
     const result = await useCase.execute({ jobId: "job_1", topK: 3, threshold: 0.8 });
@@ -50,4 +50,3 @@ describe("GenerateResumeJsonUseCase", () => {
     expect(result.document.id).toBe("document_1");
   });
 });
-

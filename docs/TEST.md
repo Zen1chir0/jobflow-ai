@@ -11,11 +11,12 @@ Phase 02 - Job Parsing
 Phase 03 - Match Scoring
 Phase 04 - Resume Intelligence
 Phase 05 - Document Generation
+Phase 06 - Resume Rendering
 ```
 
 Future phases are intentionally excluded.
 
-This document must not be used to justify LaTeX rendering, PDF generation, ATS automation, lifecycle, observability service, or analytics work.
+This document must not be used to justify ATS automation, lifecycle, observability service, or analytics work.
 
 ## Testing Philosophy
 
@@ -54,6 +55,7 @@ node dist\src\cli\index.js parse --help
 node dist\src\cli\index.js score --help
 node dist\src\cli\index.js fragments --help
 node dist\src\cli\index.js generate --help
+node dist\src\cli\index.js render --help
 ```
 
 Targeted automated test commands:
@@ -65,8 +67,9 @@ npm test -- tests/unit/services/parsing
 npm test -- tests/unit/services/scoring
 npm test -- tests/unit/services/resume-intelligence
 npm test -- tests/unit/services/document-generation
+npm test -- tests/unit/services/resume-rendering
 npm test -- tests/integration/repositories
-npm test -- tests/integration/cli-discover.test.ts tests/integration/cli-parse.test.ts tests/integration/cli-score.test.ts tests/integration/cli-fragments.test.ts tests/integration/cli-generate.test.ts
+npm test -- tests/integration/cli-discover.test.ts tests/integration/cli-parse.test.ts tests/integration/cli-score.test.ts tests/integration/cli-fragments.test.ts tests/integration/cli-generate.test.ts tests/integration/cli-render.test.ts
 ```
 
 ## Test Layers
@@ -367,6 +370,55 @@ Expected checks:
 - Unsupported claims are rejected before persistence.
 - No LaTeX rendering, PDF generation, ATS automation, lifecycle, observability service, analytics, or application submission is performed.
 
+### Phase 06 - Resume Rendering
+
+Automated coverage:
+
+- Minimal ResumeJson rendering
+- Complete ResumeJson rendering
+- Dense ResumeJson rendering
+- Empty education and certifications rendering
+- Long skills list rendering
+- Long experience list rendering
+- Multi-paragraph summary rendering
+- LaTeX escaping
+- Template selection
+- Artifact path generation
+- Artifact storage
+- PDF compiler wrapper behavior
+- Generated resume repository mapping
+- Render resume use case orchestration
+- `render` CLI parsing and output
+
+Representative tests:
+
+```text
+tests/unit/services/resume-rendering/latex-escape.test.ts
+tests/unit/services/resume-rendering/template-selector.test.ts
+tests/unit/services/resume-rendering/latex-template-renderer.test.ts
+tests/unit/services/resume-rendering/artifact-path-builder.test.ts
+tests/unit/services/resume-rendering/artifact-storage.test.ts
+tests/unit/services/resume-rendering/resume-rendering.service.test.ts
+tests/unit/integrations/latexmk-pdf-compiler.test.ts
+tests/unit/use-cases/render-resume.use-case.test.ts
+tests/integration/repositories/generated-resume.repository.test.ts
+tests/integration/cli-render.test.ts
+```
+
+Manual functional command:
+
+```bash
+node dist\src\cli\index.js render --document-id <generated_resume_json_document_id> --template ats
+```
+
+Expected checks:
+
+- Local artifacts are written under ignored `storage/resumes/`.
+- `resume.json`, `resume.tex`, `resume.pdf`, and `metadata.json` are the expected artifact set.
+- A row is stored in `generated_resumes`.
+- Rendering consumes stored ResumeJson and user profile header fields only.
+- No content generation, ATS automation, lifecycle, observability service, analytics, or application submission is performed.
+
 ## Unit Test Inventory
 
 Foundation:
@@ -434,6 +486,19 @@ tests/unit/services/document-generation/document-generation.service.test.ts
 tests/unit/use-cases/generate-document.use-case.test.ts
 ```
 
+Resume rendering:
+
+```text
+tests/unit/services/resume-rendering/latex-escape.test.ts
+tests/unit/services/resume-rendering/template-selector.test.ts
+tests/unit/services/resume-rendering/latex-template-renderer.test.ts
+tests/unit/services/resume-rendering/artifact-path-builder.test.ts
+tests/unit/services/resume-rendering/artifact-storage.test.ts
+tests/unit/services/resume-rendering/resume-rendering.service.test.ts
+tests/unit/integrations/latexmk-pdf-compiler.test.ts
+tests/unit/use-cases/render-resume.use-case.test.ts
+```
+
 ## Integration Test Inventory
 
 Repository integration tests with mocked Supabase clients:
@@ -445,6 +510,7 @@ tests/integration/repositories/job-match-score.repository.test.ts
 tests/integration/repositories/user-profile.repository.test.ts
 tests/integration/repositories/resume-fragment.repository.test.ts
 tests/integration/repositories/generated-document.repository.test.ts
+tests/integration/repositories/generated-resume.repository.test.ts
 ```
 
 CLI integration tests with mocked use cases:
@@ -456,6 +522,7 @@ tests/integration/cli-parse.test.ts
 tests/integration/cli-score.test.ts
 tests/integration/cli-fragments.test.ts
 tests/integration/cli-generate.test.ts
+tests/integration/cli-render.test.ts
 ```
 
 ## CLI Smoke Test Inventory
@@ -469,6 +536,7 @@ node dist\src\cli\index.js parse --help
 node dist\src\cli\index.js score --help
 node dist\src\cli\index.js fragments --help
 node dist\src\cli\index.js generate --help
+node dist\src\cli\index.js render --help
 ```
 
 Manual functional command inventory:
@@ -485,6 +553,7 @@ node dist\src\cli\index.js generate resume --job-id <job_id>
 node dist\src\cli\index.js generate cover-letter --job-id <job_id>
 node dist\src\cli\index.js generate recruiter-message --job-id <job_id>
 node dist\src\cli\index.js generate screening-response --job-id <job_id> --question "Why are you a fit for this role?"
+node dist\src\cli\index.js render --document-id <generated_resume_json_document_id> --template ats
 ```
 
 ## Mocking Strategy
@@ -511,6 +580,13 @@ Mock generation providers:
 - Provider tests may mock `fetch`.
 - No automated test may call a live chat completion endpoint.
 - Generated content fixtures must use fake, evidence-backed data only.
+
+Mock PDF compilers:
+
+- Resume rendering service tests must inject fake `PdfCompiler` implementations.
+- Compiler wrapper tests must mock process execution.
+- Automated tests must not require a local LaTeX installation.
+- Generated artifact fixtures must stay under temporary directories or ignored storage paths.
 
 Mock Supabase clients in repository tests:
 
@@ -542,6 +618,7 @@ user_profile
 job_match_scores
 user_resume_fragments
 generated_documents
+generated_resumes
 ```
 
 RPC covered by current tests:
@@ -597,6 +674,7 @@ Test data rules:
 - Do not print `LLM_API_KEY`.
 - Do not print authorization headers.
 - Do not include real provider responses that expose account metadata.
+- Do not commit generated resume artifacts.
 
 CLI output rules:
 
@@ -624,6 +702,7 @@ node dist\src\cli\index.js parse --help
 node dist\src\cli\index.js score --help
 node dist\src\cli\index.js fragments --help
 node dist\src\cli\index.js generate --help
+node dist\src\cli\index.js render --help
 ```
 
 Review checklist:

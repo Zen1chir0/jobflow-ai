@@ -4,7 +4,7 @@ JobFlow AI is a CLI-first Job Application Orchestration Platform built with a st
 
 ## Current Status
 
-Phase 5 structured document generation.
+Phase 6 resume rendering.
 
 ## Commands
 
@@ -51,6 +51,14 @@ jobflow generate screening-response --job-id <job_id> --question "Why are you a 
 ```
 
 Generation creates structured JSON artifacts only. It does not render LaTeX, create PDFs, automate ATS forms, or submit applications.
+
+Resume rendering smoke command:
+
+```bash
+jobflow render --document-id <generated_resume_json_document_id> --template ats
+```
+
+Rendering consumes stored ResumeJson and writes local resume artifacts only. It does not generate content, automate ATS forms, or submit applications.
 
 ## Architecture Rule
 

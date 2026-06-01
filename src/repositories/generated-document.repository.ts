@@ -44,6 +44,11 @@ type GeneratedDocumentTableClient = {
       single(): Promise<SupabaseSingleResult>;
     };
   };
+  select(columns: string): {
+    eq(column: string, value: string): {
+      maybeSingle(): Promise<SupabaseSingleResult>;
+    };
+  };
 };
 
 export type SupabaseGeneratedDocumentClient = {
@@ -52,6 +57,7 @@ export type SupabaseGeneratedDocumentClient = {
 
 export interface GeneratedDocumentRepository {
   create(document: NewGeneratedDocument): Promise<GeneratedDocument>;
+  findById(id: string): Promise<GeneratedDocument | null>;
 }
 
 export class SupabaseGeneratedDocumentRepository implements GeneratedDocumentRepository {
@@ -78,6 +84,18 @@ export class SupabaseGeneratedDocumentRepository implements GeneratedDocumentRep
     }
 
     return fromRow(result.data);
+  }
+
+  async findById(id: string): Promise<GeneratedDocument | null> {
+    const result = await this.client.from("generated_documents").select("*").eq("id", id).maybeSingle();
+
+    if (result.error) {
+      throw new ApplicationError("GENERATED_DOCUMENT_REPOSITORY_ERROR", "Unable to find generated document", {
+        cause: result.error
+      });
+    }
+
+    return result.data ? fromRow(result.data) : null;
   }
 }
 

@@ -72,12 +72,20 @@ function createFakeClient(row: GeneratedDocumentRow | null) {
                 Promise.resolve({
                   data: row,
                   error: null
-                })
+              })
             })
           };
-        }
+        },
+        select: () => ({
+          eq: () => ({
+            maybeSingle: () =>
+              Promise.resolve({
+                data: row,
+                error: null
+              })
+          })
+        })
       };
     }
   };
 }
-
