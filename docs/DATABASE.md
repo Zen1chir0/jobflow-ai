@@ -340,18 +340,18 @@ CREATE TABLE applications (
   current_state text NOT NULL CHECK (
     current_state IN (
       'DISCOVERED',
-      'ANALYZED',
-      'READY_TO_APPLY',
-      'AUTOFILL_STARTED',
-      'AUTOFILL_COMPLETED',
-      'SUBMITTED',
-      'ASSESSMENT',
-      'INTERVIEW',
+      'PARSED',
+      'SCORED',
+      'GENERATED',
+      'RENDERED',
+      'READY_FOR_APPLICATION',
+      'HUMAN_APPROVAL_REQUIRED',
+      'APPLIED',
+      'INTERVIEWING',
       'OFFER',
-      'HIRED',
       'REJECTED',
       'WITHDRAWN',
-      'GHOSTED'
+      'HIRED'
     )
   ) DEFAULT 'DISCOVERED',
 
@@ -396,45 +396,24 @@ CREATE TABLE application_events (
 
 ---
 
-# 6. Transactional State Audit Trigger
+# 6. Lifecycle Event Strategy
 
-All application state changes must create an event.
+Application lifecycle events are written explicitly by the lifecycle service through the application event repository.
 
-```sql
-CREATE OR REPLACE FUNCTION log_application_state_change()
-RETURNS TRIGGER AS $$
-BEGIN
-  IF (OLD.current_state IS DISTINCT FROM NEW.current_state) THEN
-    INSERT INTO application_events (
-      application_id,
-      from_state,
-      to_state,
-      execution_id,
-      metadata
-    ) VALUES (
-      NEW.id,
-      OLD.current_state,
-      NEW.current_state,
-      NEW.last_execution_id,
-      jsonb_build_object(
-        'timestamp', clock_timestamp(),
-        'job_id', NEW.job_id
-      )
-    );
-  END IF;
+The database no longer uses `trigger_audit_application_state`.
 
-  NEW.updated_at = now();
+Reason:
 
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
+```text
+Phase 8 creates lifecycle events explicitly so application timelines have one event writer and avoid duplicate transition records.
 ```
 
-```sql
-CREATE TRIGGER trigger_audit_application_state
-BEFORE UPDATE ON applications
-FOR EACH ROW
-EXECUTE FUNCTION log_application_state_change();
+Lifecycle state changes must still:
+
+```text
+update applications.current_state
+insert an application_events row
+preserve from_state, to_state, event_type, execution_id, metadata, and created_at
 ```
 
 ---
@@ -580,9 +559,9 @@ CREATE VIEW platform_performance_view AS
 SELECT
   j.source,
   COUNT(a.id) AS total_applications,
-  COUNT(*) FILTER (WHERE a.current_state IN ('INTERVIEW', 'OFFER', 'HIRED')) AS positive_responses,
+  COUNT(*) FILTER (WHERE a.current_state IN ('INTERVIEWING', 'OFFER', 'HIRED')) AS positive_responses,
   ROUND(
-    COUNT(*) FILTER (WHERE a.current_state IN ('INTERVIEW', 'OFFER', 'HIRED'))::numeric
+    COUNT(*) FILTER (WHERE a.current_state IN ('INTERVIEWING', 'OFFER', 'HIRED'))::numeric
     / NULLIF(COUNT(a.id), 0) * 100,
     2
   ) AS positive_response_rate
@@ -611,6 +590,8 @@ CREATE INDEX idx_applications_current_state ON applications(current_state);
 
 CREATE INDEX idx_application_events_application_id ON application_events(application_id);
 CREATE INDEX idx_application_events_created_at ON application_events(created_at DESC);
+CREATE INDEX idx_application_events_application_id_created_at
+ON application_events(application_id, created_at ASC);
 
 CREATE INDEX idx_execution_logs_execution_id ON execution_logs(execution_id);
 CREATE INDEX idx_execution_logs_service ON execution_logs(service);
