@@ -4,7 +4,7 @@ JobFlow AI is a CLI-first Job Application Orchestration Platform built with a st
 
 ## Current Status
 
-Phase 6 resume rendering.
+Phase 8 lifecycle tracking.
 
 Phase 7 ATS automation has been formally split into stage-gated subphases:
 
@@ -16,6 +16,8 @@ Phase 7D - ATS Reliability Hardening
 ```
 
 Phase 7A foundation scaffolding, Phase 7B mock-driven Greenhouse/Lever/Generic strategies, Phase 7C Workday state-machine scaffolding, and Phase 7D ATS reliability boundaries are implemented. No live ATS automation exists yet.
+
+Phase 8 lifecycle tracking is implemented with strict state transitions, application snapshots, immutable lifecycle events, timeline reconstruction, and a `jobflow lifecycle` command group.
 
 ## Commands
 
@@ -97,6 +99,16 @@ jobflow apply --job-id <job_id> --application-url <application_url> --resume-pdf
 
 The current apply command is still safe for local use. Strategy execution is tested through local mock fixtures and adapters only; the CLI does not open a browser, interact with live ATS pages, or submit applications.
 
+Lifecycle smoke commands:
+
+```bash
+jobflow lifecycle create --job-id <job_id>
+jobflow lifecycle transition --application-id <application_id> --to PARSED
+jobflow lifecycle timeline --application-id <application_id>
+```
+
+Lifecycle tracks application state and event history only. It does not perform ATS automation, open browsers, manage screenshots, store sessions, create observability logs, calculate analytics, or submit applications.
+
 ## Roadmap
 
 ```text
@@ -109,7 +121,7 @@ Phase 9  - Observability
 Phase 10 - Analytics
 ```
 
-Phase 7B provides mock-driven Greenhouse, Lever, and conservative Generic strategy behavior. Phase 7C detects Workday states and constructs checkpoints without automatically progressing through multiple Workday states. Phase 7D hardens ATS reliability boundaries for failures, screenshots, sessions, checkpoints, retries, and upload verification without adding live browser automation. Live ATS automation is not allowed until explicitly approved in a later subphase, and every ATS path must stop before final submission.
+Phase 7B provides mock-driven Greenhouse, Lever, and conservative Generic strategy behavior. Phase 7C detects Workday states and constructs checkpoints without automatically progressing through multiple Workday states. Phase 7D hardens ATS reliability boundaries for failures, screenshots, sessions, checkpoints, retries, and upload verification without adding live browser automation. Phase 8 tracks application lifecycle state after those workflow outputs. Live ATS automation is not allowed until explicitly approved in a later subphase, and every ATS path must stop before final submission.
 
 ## Architecture Rule
 

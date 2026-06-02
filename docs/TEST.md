@@ -16,11 +16,12 @@ Phase 7A - ATS Automation Foundation
 Phase 7B - Greenhouse / Lever / Generic Strategies
 Phase 7C - Workday State Machine
 Phase 7D - ATS Reliability Hardening
+Phase 8 - Application Lifecycle Service
 ```
 
-Future lifecycle, observability service, analytics, and live browser automation expectations remain out of scope until explicit user approval.
+Future observability service, analytics, and live browser automation expectations remain out of scope until explicit user approval.
 
-This document must not be used to justify ATS automation, lifecycle, observability service, or analytics work.
+This document must not be used to justify ATS automation, observability service, or analytics work.
 
 ## Testing Philosophy
 
@@ -62,6 +63,7 @@ node dist\src\cli\index.js fragments --help
 node dist\src\cli\index.js generate --help
 node dist\src\cli\index.js render --help
 node dist\src\cli\index.js apply --help
+node dist\src\cli\index.js lifecycle --help
 ```
 
 Targeted automated test commands:
@@ -75,8 +77,9 @@ npm test -- tests/unit/services/resume-intelligence
 npm test -- tests/unit/services/document-generation
 npm test -- tests/unit/services/resume-rendering
 npm test -- tests/unit/services/ats
+npm test -- tests/unit/services/lifecycle
 npm test -- tests/integration/repositories
-npm test -- tests/integration/cli-discover.test.ts tests/integration/cli-parse.test.ts tests/integration/cli-score.test.ts tests/integration/cli-fragments.test.ts tests/integration/cli-generate.test.ts tests/integration/cli-render.test.ts tests/integration/cli-apply.test.ts
+npm test -- tests/integration/cli-discover.test.ts tests/integration/cli-parse.test.ts tests/integration/cli-score.test.ts tests/integration/cli-fragments.test.ts tests/integration/cli-generate.test.ts tests/integration/cli-render.test.ts tests/integration/cli-apply.test.ts tests/integration/cli-lifecycle.test.ts
 ```
 
 ## Test Layers
@@ -613,6 +616,62 @@ Expected checks:
 - No real credentials or sessions are used.
 - No lifecycle, observability service, analytics, or application submission is performed.
 
+### Phase 8 - Application Lifecycle Service
+
+Automated coverage:
+
+- Approved application state model
+- Valid state transition validation
+- Invalid state transition rejection
+- Manual override reason enforcement
+- Application creation
+- Initial lifecycle event creation
+- State transition event creation
+- Application snapshot updates
+- Timeline reconstruction
+- Timeline ordering
+- Application repository mapping
+- Application event repository mapping
+- Lifecycle service orchestration
+- Create application use case orchestration
+- Transition application state use case orchestration
+- Get application timeline use case orchestration
+- `lifecycle create` CLI parsing and output
+- `lifecycle transition` CLI parsing and output
+- `lifecycle timeline` CLI parsing and output
+
+Representative tests:
+
+```text
+tests/unit/domain/applications/application-state-machine.test.ts
+tests/unit/services/lifecycle/state-transition.validator.test.ts
+tests/unit/services/lifecycle/lifecycle.service.test.ts
+tests/unit/use-cases/create-application.use-case.test.ts
+tests/unit/use-cases/transition-application-state.use-case.test.ts
+tests/unit/use-cases/get-application-timeline.use-case.test.ts
+tests/integration/repositories/application.repository.test.ts
+tests/integration/repositories/application-event.repository.test.ts
+tests/integration/cli-lifecycle.test.ts
+```
+
+Manual functional commands:
+
+```bash
+node dist\src\cli\index.js lifecycle create --job-id <job_id>
+node dist\src\cli\index.js lifecycle transition --application-id <application_id> --to PARSED
+node dist\src\cli\index.js lifecycle transition --application-id <application_id> --to OFFER --reason "Recruiter confirmed offer state"
+node dist\src\cli\index.js lifecycle timeline --application-id <application_id>
+```
+
+Expected checks:
+
+- Application snapshot is stored in `applications`.
+- Lifecycle events are stored in `application_events`.
+- Current state can be reconstructed from events.
+- Invalid transitions fail safely.
+- Manual overrides require a reason.
+- No ATS automation, Playwright workflow, browser session, screenshot handling, observability service, analytics service, or application submission is performed.
+
 ## Unit Test Inventory
 
 Foundation:
@@ -721,6 +780,17 @@ tests/unit/services/ats/workday/workday-checkpoint-builder.test.ts
 tests/unit/use-cases/autofill-application.use-case.test.ts
 ```
 
+Lifecycle:
+
+```text
+tests/unit/domain/applications/application-state-machine.test.ts
+tests/unit/services/lifecycle/state-transition.validator.test.ts
+tests/unit/services/lifecycle/lifecycle.service.test.ts
+tests/unit/use-cases/create-application.use-case.test.ts
+tests/unit/use-cases/transition-application-state.use-case.test.ts
+tests/unit/use-cases/get-application-timeline.use-case.test.ts
+```
+
 ## Integration Test Inventory
 
 Repository integration tests with mocked Supabase clients:
@@ -733,6 +803,8 @@ tests/integration/repositories/user-profile.repository.test.ts
 tests/integration/repositories/resume-fragment.repository.test.ts
 tests/integration/repositories/generated-document.repository.test.ts
 tests/integration/repositories/generated-resume.repository.test.ts
+tests/integration/repositories/application.repository.test.ts
+tests/integration/repositories/application-event.repository.test.ts
 ```
 
 CLI integration tests with mocked use cases:
@@ -746,6 +818,7 @@ tests/integration/cli-fragments.test.ts
 tests/integration/cli-generate.test.ts
 tests/integration/cli-render.test.ts
 tests/integration/cli-apply.test.ts
+tests/integration/cli-lifecycle.test.ts
 ```
 
 ## CLI Smoke Test Inventory
@@ -761,6 +834,7 @@ node dist\src\cli\index.js fragments --help
 node dist\src\cli\index.js generate --help
 node dist\src\cli\index.js render --help
 node dist\src\cli\index.js apply --help
+node dist\src\cli\index.js lifecycle --help
 ```
 
 ## CI Testing Strategy
@@ -824,6 +898,9 @@ node dist\src\cli\index.js generate recruiter-message --job-id <job_id>
 node dist\src\cli\index.js generate screening-response --job-id <job_id> --question "Why are you a fit for this role?"
 node dist\src\cli\index.js render --document-id <generated_resume_json_document_id> --template ats
 node dist\src\cli\index.js apply --job-id <job_id> --application-url <application_url> --resume-pdf <local_resume_pdf_path>
+node dist\src\cli\index.js lifecycle create --job-id <job_id>
+node dist\src\cli\index.js lifecycle transition --application-id <application_id> --to PARSED
+node dist\src\cli\index.js lifecycle timeline --application-id <application_id>
 ```
 
 ## Mocking Strategy
@@ -897,6 +974,8 @@ job_match_scores
 user_resume_fragments
 generated_documents
 generated_resumes
+applications
+application_events
 ```
 
 RPC covered by current tests:
@@ -1077,6 +1156,7 @@ node dist\src\cli\index.js fragments --help
 node dist\src\cli\index.js generate --help
 node dist\src\cli\index.js render --help
 node dist\src\cli\index.js apply --help
+node dist\src\cli\index.js lifecycle --help
 ```
 
 Review checklist:
