@@ -13,9 +13,10 @@ Phase 04 - Resume Intelligence
 Phase 05 - Document Generation
 Phase 06 - Resume Rendering
 Phase 7A - ATS Automation Foundation
+Phase 7B - Greenhouse / Lever / Generic Strategies
 ```
 
-Phase 7B-7D testing expectations are documented as future gate requirements only. They do not authorize implementation before explicit user approval.
+Phase 7C-7D testing expectations are documented as future gate requirements only. They do not authorize implementation before explicit user approval.
 
 This document must not be used to justify ATS automation, lifecycle, observability service, or analytics work.
 
@@ -467,6 +468,56 @@ Expected checks:
 - No Greenhouse, Lever, Generic, or Workday strategy execution occurs.
 - No lifecycle, observability service, analytics, or application submission is performed.
 
+### Phase 7B - Greenhouse / Lever / Generic Strategies
+
+Automated coverage:
+
+- Greenhouse mock fixture autofill
+- Lever mock fixture autofill
+- Conservative Generic mock fixture autofill
+- ATS page adapter boundary behavior
+- ATS automation service strategy orchestration
+- Personal information field filling
+- Resume upload verification
+- Safe screening-question matching
+- Unmatched screening-question skipping
+- Human approval stop state
+- Submit guard preservation
+
+Representative tests:
+
+```text
+tests/unit/services/ats/ats-automation.service.test.ts
+tests/unit/services/ats/resume-upload-verifier.test.ts
+tests/unit/services/ats/screening-question-handler.test.ts
+tests/unit/services/ats/strategies/greenhouse.strategy.test.ts
+tests/unit/services/ats/strategies/lever.strategy.test.ts
+tests/unit/services/ats/strategies/generic.strategy.test.ts
+tests/unit/use-cases/autofill-application.use-case.test.ts
+```
+
+Fixture files:
+
+```text
+tests/fixtures/ats/greenhouse/basic-application.html
+tests/fixtures/ats/lever/basic-application.html
+tests/fixtures/ats/generic/basic-application.html
+tests/fixtures/ats/uploads/resume.pdf.placeholder
+```
+
+Expected checks:
+
+- Strategy tests use fake adapters and local fixtures only.
+- Resume upload verification requires visible filename confirmation.
+- Screening questions are answered only from provided answers.
+- Ambiguous or unmatched questions are skipped.
+- Generic strategy fills only obvious fields.
+- Every strategy returns `HUMAN_APPROVAL_REQUIRED`.
+- No browser is opened.
+- No Playwright workflow runs.
+- No live ATS site is accessed.
+- No Workday behavior, lifecycle, observability service, analytics, or application submission is performed.
+
 ## Unit Test Inventory
 
 Foundation:
@@ -555,6 +606,12 @@ tests/unit/services/ats/ats-strategy-registry.test.ts
 tests/unit/services/ats/semantic-locator.service.test.ts
 tests/unit/services/ats/submit-guard.test.ts
 tests/unit/services/ats/resume-pdf-path.validator.test.ts
+tests/unit/services/ats/resume-upload-verifier.test.ts
+tests/unit/services/ats/screening-question-handler.test.ts
+tests/unit/services/ats/ats-automation.service.test.ts
+tests/unit/services/ats/strategies/greenhouse.strategy.test.ts
+tests/unit/services/ats/strategies/lever.strategy.test.ts
+tests/unit/services/ats/strategies/generic.strategy.test.ts
 tests/unit/use-cases/autofill-application.use-case.test.ts
 ```
 
@@ -722,7 +779,7 @@ Known provider limitation:
 
 ## Planned Phase 7A-7D ATS Testing Strategy
 
-This section records the approved ATS split testing expectations. Phase 7A foundation coverage is active after Phase 7A implementation; Phase 7B-7D remain future scope until explicitly approved.
+This section records the approved ATS split testing expectations. Phase 7A and Phase 7B coverage is active after implementation; Phase 7C-7D remain future scope until explicitly approved.
 
 ### Phase 7A - ATS Automation Foundation
 
@@ -751,7 +808,7 @@ node dist\src\cli\index.js apply --help
 
 ### Phase 7B - Greenhouse / Lever / Generic Strategies
 
-Automated coverage must include:
+Automated coverage includes:
 
 - Greenhouse mock fixture autofill
 - Lever mock fixture autofill

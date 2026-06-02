@@ -24,6 +24,32 @@ export type ScreeningAnswer = {
 
 export type ATSAutomationStatus = "FOUNDATION_READY" | "HUMAN_APPROVAL_REQUIRED";
 
+export type ATSFieldKey =
+  | "first_name"
+  | "last_name"
+  | "email"
+  | "phone"
+  | "linkedin"
+  | "github"
+  | "portfolio"
+  | "location";
+
+export type ATSFieldFillResult = {
+  fieldKey: ATSFieldKey;
+  filled: boolean;
+};
+
+export type ATSResumeUploadResult = {
+  uploaded: boolean;
+  fileName: string;
+};
+
+export type ATSScreeningQuestionResult = {
+  question: string;
+  answered: boolean;
+  reason?: "matched" | "not_found" | "ambiguous";
+};
+
 export type ATSAutomationPlan = {
   jobId: string;
   atsType: ATSType;
@@ -31,4 +57,7 @@ export type ATSAutomationPlan = {
   status: ATSAutomationStatus;
   requiresHumanApproval: boolean;
   message: string;
+  filledFields?: ATSFieldFillResult[];
+  resumeUpload?: ATSResumeUploadResult;
+  screeningQuestions?: ATSScreeningQuestionResult[];
 };

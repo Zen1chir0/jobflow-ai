@@ -27,6 +27,12 @@ export { SupabaseResumeFragmentRepository } from "./repositories/resume-fragment
 export { SupabaseGeneratedDocumentRepository } from "./repositories/generated-document.repository.js";
 export { SupabaseGeneratedResumeRepository } from "./repositories/generated-resume.repository.js";
 export { SupabaseUserProfileRepository } from "./repositories/user-profile.repository.js";
+export { ATSAutomationService } from "./services/ats/ats-automation.service.js";
+export { ATSStrategyRegistry } from "./services/ats/ats-strategy-registry.js";
+export { ATSTypeDetector } from "./services/ats/ats-type-detector.js";
+export { GenericStrategy } from "./services/ats/strategies/generic.strategy.js";
+export { GreenhouseStrategy } from "./services/ats/strategies/greenhouse.strategy.js";
+export { LeverStrategy } from "./services/ats/strategies/lever.strategy.js";
 export { DiscoverJobsUseCase } from "./use-cases/discover-jobs.use-case.js";
 export { ParseJobUseCase } from "./use-cases/parse-job.use-case.js";
 export { ScoreJobUseCase } from "./use-cases/score-job.use-case.js";
