@@ -901,6 +901,32 @@ Examples:
 
 are mandatory test targets.
 
+GitHub Actions CI must protect the repository with the same core gates used during local stage-gated development:
+
+```bash
+npm ci
+npm run lint
+npm run typecheck
+npm test
+npm run build
+```
+
+CI must use Node.js 22 on a GitHub-hosted Ubuntu runner.
+
+CI must not require:
+
+* real Supabase credentials
+* real LLM keys
+* real embedding provider calls
+* real ATS credentials
+* Playwright browsers
+* LaTeX installation
+* live ATS websites
+
+CI may use fake placeholder environment variables only.
+
+CI must never expose secrets.
+
 ---
 
 # SECTION 23

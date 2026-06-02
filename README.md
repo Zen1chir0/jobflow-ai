@@ -15,15 +15,33 @@ Phase 7C - Workday State Machine
 Phase 7D - ATS Reliability Hardening
 ```
 
-Phase 7A foundation scaffolding is implemented. No live ATS automation exists yet.
+Phase 7A foundation scaffolding and Phase 7B mock-driven Greenhouse, Lever, and conservative Generic strategies are implemented. No live ATS automation exists yet.
 
 ## Commands
 
 ```bash
+npm ci
 npm run lint
 npm run typecheck
 npm test
+npm run build
 ```
+
+## Continuous Integration
+
+GitHub Actions runs CI on pull requests, pushes to `main`, and manual workflow dispatch.
+
+The CI workflow uses Node.js 22 on an Ubuntu runner and runs:
+
+```bash
+npm ci
+npm run lint
+npm run typecheck
+npm test
+npm run build
+```
+
+CI uses placeholder environment variables only. It does not require real Supabase credentials, LLM keys, embedding provider calls, ATS credentials, Playwright browsers, LaTeX installation, live ATS websites, deployments, or artifact uploads.
 
 ## Phase 1 Discovery
 
@@ -77,7 +95,7 @@ ATS automation foundation smoke command:
 jobflow apply --job-id <job_id> --application-url <application_url> --resume-pdf <local_resume_pdf_path>
 ```
 
-The Phase 7A apply command prepares a foundation plan only. It does not open a browser, interact with live ATS pages, autofill forms, or submit applications.
+The current apply command is still safe for local use. Strategy execution is tested through local mock fixtures and adapters only; the CLI does not open a browser, interact with live ATS pages, or submit applications.
 
 ## Roadmap
 
@@ -91,7 +109,7 @@ Phase 9  - Observability
 Phase 10 - Analytics
 ```
 
-Phase 7A scaffolds `jobflow apply --help`, but live ATS automation is not allowed until the approved subphase scope permits it. Every ATS path must stop before final submission.
+Phase 7B provides mock-driven Greenhouse, Lever, and conservative Generic strategy behavior. Live ATS automation is not allowed until explicitly approved in a later subphase, and every ATS path must stop before final submission.
 
 ## Architecture Rule
 

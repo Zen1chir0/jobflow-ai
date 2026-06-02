@@ -5,6 +5,7 @@ import type {
   ATSType,
   ScreeningAnswer
 } from "../../domain/ats/ats.types.js";
+import type { ATSStrategyExecutionRequest, ATSStrategyExecutionResult } from "./ats-interaction.types.js";
 
 export interface ATSStrategy {
   readonly type: ATSType;
@@ -20,4 +21,6 @@ export interface ATSStrategy {
   answerScreeningQuestions?(answers: ScreeningAnswer[]): Promise<void>;
 
   pauseForHumanReview?(): Promise<ATSAutomationPlan>;
+
+  execute?(request: ATSStrategyExecutionRequest): Promise<ATSStrategyExecutionResult>;
 }
