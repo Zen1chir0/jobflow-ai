@@ -31,4 +31,30 @@ describe("ResumeUploadVerifier", () => {
       })
     ).rejects.toMatchObject({ code: "RESUME_UPLOAD_VERIFICATION_FAILED" });
   });
+
+  it("rejects non-PDF upload paths", async () => {
+    const adapter = new FakeATSPageAdapter("<label>Resume</label>", []);
+    const verifier = new ResumeUploadVerifier();
+
+    await expect(
+      verifier.uploadAndVerify({
+        adapter,
+        filePath: "storage/resumes/job_1/resume.txt",
+        candidates: [{ strategy: "label", value: /resume/i }]
+      })
+    ).rejects.toMatchObject({ code: "INVALID_RESUME_PDF_PATH" });
+  });
+
+  it("rejects upload paths with directory traversal", async () => {
+    const adapter = new FakeATSPageAdapter("<label>Resume</label>", []);
+    const verifier = new ResumeUploadVerifier();
+
+    await expect(
+      verifier.uploadAndVerify({
+        adapter,
+        filePath: "../resume.pdf",
+        candidates: [{ strategy: "label", value: /resume/i }]
+      })
+    ).rejects.toMatchObject({ code: "INVALID_RESUME_PDF_PATH" });
+  });
 });

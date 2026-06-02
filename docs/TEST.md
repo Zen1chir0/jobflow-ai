@@ -15,9 +15,10 @@ Phase 06 - Resume Rendering
 Phase 7A - ATS Automation Foundation
 Phase 7B - Greenhouse / Lever / Generic Strategies
 Phase 7C - Workday State Machine
+Phase 7D - ATS Reliability Hardening
 ```
 
-Phase 7D testing expectations are documented as future gate requirements only. They do not authorize implementation before explicit user approval.
+Future lifecycle, observability service, analytics, and live browser automation expectations remain out of scope until explicit user approval.
 
 This document must not be used to justify ATS automation, lifecycle, observability service, or analytics work.
 
@@ -567,6 +568,51 @@ Expected checks:
 - No live ATS site is accessed.
 - No lifecycle, observability service, analytics, or application submission is performed.
 
+### Phase 7D - ATS Reliability Hardening
+
+Automated coverage:
+
+- Failure capture boundary
+- Secret redaction in failure records
+- Screenshot path generation
+- Screenshot path traversal rejection
+- Session storage path generation
+- Session storage path traversal rejection
+- ATS checkpoint storage boundary
+- Retry policy behavior
+- Unsafe submit retry prevention
+- Upload verification hardening
+- Cross-strategy failure records
+- Screenshot/session `.gitignore` coverage
+
+Representative tests:
+
+```text
+tests/unit/services/ats/reliability/ats-failure-capture.test.ts
+tests/unit/services/ats/reliability/ats-reliability.service.test.ts
+tests/unit/services/ats/reliability/in-memory-ats-checkpoint-store.test.ts
+tests/unit/services/ats/reliability/retry-policy.test.ts
+tests/unit/services/ats/reliability/screenshot-path-builder.test.ts
+tests/unit/services/ats/reliability/security-artifacts.test.ts
+tests/unit/services/ats/reliability/session-storage-path-builder.test.ts
+tests/unit/services/ats/resume-upload-verifier.test.ts
+```
+
+Expected checks:
+
+- Failure records are ATS-scoped and sanitized.
+- Screenshot paths stay under `storage/screenshots/`.
+- Session paths stay under `storage/playwright-state/`.
+- Screenshot and session directories are ignored by Git.
+- Checkpoint storage remains an ATS boundary, not lifecycle or observability.
+- Retry policy refuses unsafe submit-adjacent retries.
+- Upload verification rejects non-PDF and traversal paths.
+- No browser is opened.
+- No Playwright workflow runs.
+- No live ATS site is accessed.
+- No real credentials or sessions are used.
+- No lifecycle, observability service, analytics, or application submission is performed.
+
 ## Unit Test Inventory
 
 Foundation:
@@ -662,6 +708,13 @@ tests/unit/services/ats/strategies/greenhouse.strategy.test.ts
 tests/unit/services/ats/strategies/lever.strategy.test.ts
 tests/unit/services/ats/strategies/generic.strategy.test.ts
 tests/unit/services/ats/strategies/workday.strategy.test.ts
+tests/unit/services/ats/reliability/ats-failure-capture.test.ts
+tests/unit/services/ats/reliability/ats-reliability.service.test.ts
+tests/unit/services/ats/reliability/in-memory-ats-checkpoint-store.test.ts
+tests/unit/services/ats/reliability/retry-policy.test.ts
+tests/unit/services/ats/reliability/screenshot-path-builder.test.ts
+tests/unit/services/ats/reliability/security-artifacts.test.ts
+tests/unit/services/ats/reliability/session-storage-path-builder.test.ts
 tests/unit/services/ats/workday/workday-state-machine.test.ts
 tests/unit/services/ats/workday/workday-page-state-detector.test.ts
 tests/unit/services/ats/workday/workday-checkpoint-builder.test.ts
@@ -878,7 +931,7 @@ Known provider limitation:
 
 ## Planned Phase 7A-7D ATS Testing Strategy
 
-This section records the approved ATS split testing expectations. Phase 7A, Phase 7B, and Phase 7C coverage is active after implementation; Phase 7D remains future scope until explicitly approved.
+This section records the approved ATS split testing expectations. Phase 7A, Phase 7B, Phase 7C, and Phase 7D coverage is active after implementation.
 
 ### Phase 7A - ATS Automation Foundation
 
@@ -1058,4 +1111,4 @@ Before approving any phase:
 - Phase report is committed locally before marking the phase complete.
 - The next phase has not started automatically.
 
-Phase 7C must not begin until the user explicitly approves it.
+Phase 8 must not begin until the user explicitly approves it.
