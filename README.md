@@ -15,7 +15,7 @@ Phase 7C - Workday State Machine
 Phase 7D - ATS Reliability Hardening
 ```
 
-Phase 7A foundation scaffolding and Phase 7B mock-driven Greenhouse, Lever, and conservative Generic strategies are implemented. No live ATS automation exists yet.
+Phase 7A foundation scaffolding, Phase 7B mock-driven Greenhouse/Lever/Generic strategies, and Phase 7C Workday state-machine scaffolding are implemented. No live ATS automation exists yet.
 
 ## Commands
 
@@ -109,7 +109,7 @@ Phase 9  - Observability
 Phase 10 - Analytics
 ```
 
-Phase 7B provides mock-driven Greenhouse, Lever, and conservative Generic strategy behavior. Live ATS automation is not allowed until explicitly approved in a later subphase, and every ATS path must stop before final submission.
+Phase 7B provides mock-driven Greenhouse, Lever, and conservative Generic strategy behavior. Phase 7C detects Workday states and constructs checkpoints without automatically progressing through multiple Workday states. Live ATS automation is not allowed until explicitly approved in a later subphase, and every ATS path must stop before final submission.
 
 ## Architecture Rule
 

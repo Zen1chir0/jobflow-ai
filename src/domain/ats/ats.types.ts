@@ -57,6 +57,7 @@ export type ATSAutomationPlan = {
   status: ATSAutomationStatus;
   requiresHumanApproval: boolean;
   message: string;
+  checkpoint?: unknown;
   filledFields?: ATSFieldFillResult[];
   resumeUpload?: ATSResumeUploadResult;
   screeningQuestions?: ATSScreeningQuestionResult[];

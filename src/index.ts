@@ -16,6 +16,7 @@ export type { GeneratedDocument } from "./domain/documents/generated-document.ty
 export type { MatchScore } from "./domain/scoring/scoring.types.js";
 export type { UserProfile } from "./domain/user-profile/user-profile.types.js";
 export type { ApplicantProfile, ATSAutomationPlan, ATSDetectionInput, ATSType, ScreeningAnswer } from "./domain/ats/ats.types.js";
+export type { WorkdayCheckpoint, WorkdayState } from "./domain/ats/workday.types.js";
 export { OpenAICompatibleEmbeddingProvider } from "./integrations/embeddings/openai-compatible-embedding.provider.js";
 export { OpenAICompatibleGenerationProvider } from "./integrations/generation/openai-compatible-generation.provider.js";
 export { LatexmkPdfCompiler } from "./integrations/pdf/latexmk-pdf-compiler.js";
@@ -33,6 +34,10 @@ export { ATSTypeDetector } from "./services/ats/ats-type-detector.js";
 export { GenericStrategy } from "./services/ats/strategies/generic.strategy.js";
 export { GreenhouseStrategy } from "./services/ats/strategies/greenhouse.strategy.js";
 export { LeverStrategy } from "./services/ats/strategies/lever.strategy.js";
+export { WorkdayStrategy } from "./services/ats/strategies/workday.strategy.js";
+export { WorkdayCheckpointBuilder } from "./services/ats/workday/workday-checkpoint-builder.js";
+export { WorkdayPageStateDetector } from "./services/ats/workday/workday-page-state-detector.js";
+export { WorkdayStateMachine } from "./services/ats/workday/workday-state-machine.js";
 export { DiscoverJobsUseCase } from "./use-cases/discover-jobs.use-case.js";
 export { ParseJobUseCase } from "./use-cases/parse-job.use-case.js";
 export { ScoreJobUseCase } from "./use-cases/score-job.use-case.js";

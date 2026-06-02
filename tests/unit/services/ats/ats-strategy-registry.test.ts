@@ -26,4 +26,15 @@ describe("ATSStrategyRegistry", () => {
 
     expect(strategy.type).toBe("generic");
   });
+
+  it("resolves Workday before generic fallback", async () => {
+    const registry = new ATSStrategyRegistry([
+      { type: "workday", detect: (input) => /workday/i.test(input.url) },
+      { type: "generic", detect: () => true }
+    ] satisfies ATSStrategy[]);
+
+    const strategy = await registry.resolve({ url: "https://company.myworkdayjobs.com/job/123" });
+
+    expect(strategy.type).toBe("workday");
+  });
 });

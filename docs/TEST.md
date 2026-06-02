@@ -14,9 +14,10 @@ Phase 05 - Document Generation
 Phase 06 - Resume Rendering
 Phase 7A - ATS Automation Foundation
 Phase 7B - Greenhouse / Lever / Generic Strategies
+Phase 7C - Workday State Machine
 ```
 
-Phase 7C-7D testing expectations are documented as future gate requirements only. They do not authorize implementation before explicit user approval.
+Phase 7D testing expectations are documented as future gate requirements only. They do not authorize implementation before explicit user approval.
 
 This document must not be used to justify ATS automation, lifecycle, observability service, or analytics work.
 
@@ -519,6 +520,53 @@ Expected checks:
 - No live ATS site is accessed.
 - No Workday behavior, lifecycle, observability service, analytics, or application submission is performed.
 
+### Phase 7C - Workday State Machine
+
+Automated coverage:
+
+- Workday state enum and transition validation
+- Invalid Workday transition rejection
+- Workday page-state detection from mock fixtures
+- Workday checkpoint payload construction
+- Workday strategy scaffold detection
+- Workday strategy safe stop behavior
+- Workday strategy does not progress through multiple states automatically
+- Human approval stop state
+
+Representative tests:
+
+```text
+tests/unit/services/ats/workday/workday-state-machine.test.ts
+tests/unit/services/ats/workday/workday-page-state-detector.test.ts
+tests/unit/services/ats/workday/workday-checkpoint-builder.test.ts
+tests/unit/services/ats/strategies/workday.strategy.test.ts
+tests/unit/services/ats/ats-strategy-registry.test.ts
+```
+
+Fixture files:
+
+```text
+tests/fixtures/ats/workday/login-required.html
+tests/fixtures/ats/workday/personal-info.html
+tests/fixtures/ats/workday/document-upload.html
+tests/fixtures/ats/workday/screening.html
+tests/fixtures/ats/workday/review.html
+```
+
+Expected checks:
+
+- Workday is modeled as a state machine.
+- Workday is not treated as a flat form.
+- The current state can be detected from a local fixture.
+- Allowed transitions can be validated deterministically.
+- Checkpoint payloads are constructed for the current state.
+- The strategy stops at `HUMAN_APPROVAL_REQUIRED`.
+- The strategy does not advance to the next state automatically.
+- No browser is opened.
+- No Playwright workflow runs.
+- No live ATS site is accessed.
+- No lifecycle, observability service, analytics, or application submission is performed.
+
 ## Unit Test Inventory
 
 Foundation:
@@ -613,6 +661,10 @@ tests/unit/services/ats/ats-automation.service.test.ts
 tests/unit/services/ats/strategies/greenhouse.strategy.test.ts
 tests/unit/services/ats/strategies/lever.strategy.test.ts
 tests/unit/services/ats/strategies/generic.strategy.test.ts
+tests/unit/services/ats/strategies/workday.strategy.test.ts
+tests/unit/services/ats/workday/workday-state-machine.test.ts
+tests/unit/services/ats/workday/workday-page-state-detector.test.ts
+tests/unit/services/ats/workday/workday-checkpoint-builder.test.ts
 tests/unit/use-cases/autofill-application.use-case.test.ts
 ```
 
@@ -826,7 +878,7 @@ Known provider limitation:
 
 ## Planned Phase 7A-7D ATS Testing Strategy
 
-This section records the approved ATS split testing expectations. Phase 7A and Phase 7B coverage is active after implementation; Phase 7C-7D remain future scope until explicitly approved.
+This section records the approved ATS split testing expectations. Phase 7A, Phase 7B, and Phase 7C coverage is active after implementation; Phase 7D remains future scope until explicitly approved.
 
 ### Phase 7A - ATS Automation Foundation
 
@@ -884,6 +936,7 @@ Automated coverage must include:
 - login/session-required handling
 - checkpoint boundary construction
 - final-submit guard behavior
+- no automatic progression through multiple Workday states
 
 Completion gate:
 
