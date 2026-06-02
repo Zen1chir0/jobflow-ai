@@ -15,7 +15,7 @@ Phase 7C - Workday State Machine
 Phase 7D - ATS Reliability Hardening
 ```
 
-No ATS automation implementation has started yet.
+Phase 7A foundation scaffolding is implemented. No live ATS automation exists yet.
 
 ## Commands
 
@@ -71,6 +71,14 @@ jobflow render --document-id <generated_resume_json_document_id> --template ats
 
 Rendering consumes stored ResumeJson and writes local resume artifacts only. It does not generate content, automate ATS forms, or submit applications.
 
+ATS automation foundation smoke command:
+
+```bash
+jobflow apply --job-id <job_id> --application-url <application_url> --resume-pdf <local_resume_pdf_path>
+```
+
+The Phase 7A apply command prepares a foundation plan only. It does not open a browser, interact with live ATS pages, autofill forms, or submit applications.
+
 ## Roadmap
 
 ```text
@@ -83,7 +91,7 @@ Phase 9  - Observability
 Phase 10 - Analytics
 ```
 
-Phase 7A may scaffold `jobflow apply --help`, but live ATS automation is not allowed until the approved subphase scope permits it. Every ATS path must stop before final submission.
+Phase 7A scaffolds `jobflow apply --help`, but live ATS automation is not allowed until the approved subphase scope permits it. Every ATS path must stop before final submission.
 
 ## Architecture Rule
 

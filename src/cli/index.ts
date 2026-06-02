@@ -4,6 +4,7 @@ import { Command } from "commander";
 import { normalize } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { createApplyCommand } from "./commands/apply.command.js";
 import { createDiscoverCommand } from "./commands/discover.command.js";
 import { createFragmentsCommand } from "./commands/fragments.command.js";
 import { createGenerateCommand } from "./commands/generate.command.js";
@@ -32,6 +33,7 @@ export function buildCli(): Command {
   program.addCommand(createFragmentsCommand());
   program.addCommand(createGenerateCommand());
   program.addCommand(createRenderCommand());
+  program.addCommand(createApplyCommand());
 
   return program;
 }

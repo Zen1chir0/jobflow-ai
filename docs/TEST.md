@@ -12,9 +12,10 @@ Phase 03 - Match Scoring
 Phase 04 - Resume Intelligence
 Phase 05 - Document Generation
 Phase 06 - Resume Rendering
+Phase 7A - ATS Automation Foundation
 ```
 
-Phase 7A-7D testing expectations are documented as future gate requirements only. They do not authorize implementation before explicit user approval.
+Phase 7B-7D testing expectations are documented as future gate requirements only. They do not authorize implementation before explicit user approval.
 
 This document must not be used to justify ATS automation, lifecycle, observability service, or analytics work.
 
@@ -56,6 +57,7 @@ node dist\src\cli\index.js score --help
 node dist\src\cli\index.js fragments --help
 node dist\src\cli\index.js generate --help
 node dist\src\cli\index.js render --help
+node dist\src\cli\index.js apply --help
 ```
 
 Targeted automated test commands:
@@ -68,8 +70,9 @@ npm test -- tests/unit/services/scoring
 npm test -- tests/unit/services/resume-intelligence
 npm test -- tests/unit/services/document-generation
 npm test -- tests/unit/services/resume-rendering
+npm test -- tests/unit/services/ats
 npm test -- tests/integration/repositories
-npm test -- tests/integration/cli-discover.test.ts tests/integration/cli-parse.test.ts tests/integration/cli-score.test.ts tests/integration/cli-fragments.test.ts tests/integration/cli-generate.test.ts tests/integration/cli-render.test.ts
+npm test -- tests/integration/cli-discover.test.ts tests/integration/cli-parse.test.ts tests/integration/cli-score.test.ts tests/integration/cli-fragments.test.ts tests/integration/cli-generate.test.ts tests/integration/cli-render.test.ts tests/integration/cli-apply.test.ts
 ```
 
 ## Test Layers
@@ -419,6 +422,51 @@ Expected checks:
 - Rendering consumes stored ResumeJson and user profile header fields only.
 - No content generation, ATS automation, lifecycle, observability service, analytics, or application submission is performed.
 
+### Phase 7A - ATS Automation Foundation
+
+Automated coverage:
+
+- ATS type detection rules
+- ATS strategy registry resolution
+- Generic strategy fallback behavior
+- Semantic locator priority ordering
+- Semantic locator failure handling
+- Submit guard blocking final submission labels
+- Resume PDF path validation
+- Autofill application use case scaffold behavior
+- Apply CLI option parsing and output
+- Mock ATS fixture directory documentation
+
+Representative tests:
+
+```text
+tests/unit/services/ats/ats-type-detector.test.ts
+tests/unit/services/ats/ats-strategy-registry.test.ts
+tests/unit/services/ats/semantic-locator.service.test.ts
+tests/unit/services/ats/submit-guard.test.ts
+tests/unit/services/ats/resume-pdf-path.validator.test.ts
+tests/unit/use-cases/autofill-application.use-case.test.ts
+tests/integration/cli-apply.test.ts
+```
+
+Manual functional command:
+
+```bash
+node dist\src\cli\index.js apply --job-id <job_id> --application-url <application_url> --resume-pdf <local_resume_pdf_path>
+```
+
+Expected checks:
+
+- ATS type is detected deterministically from the URL.
+- Resume PDF path is validated without uploading files.
+- CLI output does not expose secrets.
+- Command returns `HUMAN_APPROVAL_REQUIRED`.
+- No browser is opened.
+- No Playwright workflow runs.
+- No live ATS site is accessed.
+- No Greenhouse, Lever, Generic, or Workday strategy execution occurs.
+- No lifecycle, observability service, analytics, or application submission is performed.
+
 ## Unit Test Inventory
 
 Foundation:
@@ -499,6 +547,17 @@ tests/unit/integrations/latexmk-pdf-compiler.test.ts
 tests/unit/use-cases/render-resume.use-case.test.ts
 ```
 
+ATS automation foundation:
+
+```text
+tests/unit/services/ats/ats-type-detector.test.ts
+tests/unit/services/ats/ats-strategy-registry.test.ts
+tests/unit/services/ats/semantic-locator.service.test.ts
+tests/unit/services/ats/submit-guard.test.ts
+tests/unit/services/ats/resume-pdf-path.validator.test.ts
+tests/unit/use-cases/autofill-application.use-case.test.ts
+```
+
 ## Integration Test Inventory
 
 Repository integration tests with mocked Supabase clients:
@@ -523,6 +582,7 @@ tests/integration/cli-score.test.ts
 tests/integration/cli-fragments.test.ts
 tests/integration/cli-generate.test.ts
 tests/integration/cli-render.test.ts
+tests/integration/cli-apply.test.ts
 ```
 
 ## CLI Smoke Test Inventory
@@ -554,6 +614,7 @@ node dist\src\cli\index.js generate cover-letter --job-id <job_id>
 node dist\src\cli\index.js generate recruiter-message --job-id <job_id>
 node dist\src\cli\index.js generate screening-response --job-id <job_id> --question "Why are you a fit for this role?"
 node dist\src\cli\index.js render --document-id <generated_resume_json_document_id> --template ats
+node dist\src\cli\index.js apply --job-id <job_id> --application-url <application_url> --resume-pdf <local_resume_pdf_path>
 ```
 
 ## Mocking Strategy
@@ -661,7 +722,7 @@ Known provider limitation:
 
 ## Planned Phase 7A-7D ATS Testing Strategy
 
-This section records future testing expectations for the approved ATS split. It is not current implementation scope.
+This section records the approved ATS split testing expectations. Phase 7A foundation coverage is active after Phase 7A implementation; Phase 7B-7D remain future scope until explicitly approved.
 
 ### Phase 7A - ATS Automation Foundation
 
@@ -675,6 +736,8 @@ Automated coverage must include:
 - applicant/profile input validation
 - mock ATS HTML fixture structure
 - `jobflow apply --help` compiled smoke test
+- `apply` CLI option parsing and output
+- `AutofillApplicationUseCase` scaffold orchestration
 
 Completion gate:
 
@@ -802,6 +865,7 @@ node dist\src\cli\index.js score --help
 node dist\src\cli\index.js fragments --help
 node dist\src\cli\index.js generate --help
 node dist\src\cli\index.js render --help
+node dist\src\cli\index.js apply --help
 ```
 
 Review checklist:
@@ -836,4 +900,4 @@ Before approving any phase:
 - Phase report is committed locally before marking the phase complete.
 - The next phase has not started automatically.
 
-Phase 7A must not begin until the user explicitly approves it.
+Phase 7B must not begin until the user explicitly approves it.

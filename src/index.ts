@@ -1,4 +1,5 @@
 export { buildCli } from "./cli/index.js";
+export { createApplyCommand } from "./cli/commands/apply.command.js";
 export { createDiscoverCommand } from "./cli/commands/discover.command.js";
 export { createFragmentsCommand } from "./cli/commands/fragments.command.js";
 export { createGenerateCommand } from "./cli/commands/generate.command.js";
@@ -14,6 +15,7 @@ export type { GeneratedResume } from "./domain/resumes/rendered-resume.types.js"
 export type { GeneratedDocument } from "./domain/documents/generated-document.types.js";
 export type { MatchScore } from "./domain/scoring/scoring.types.js";
 export type { UserProfile } from "./domain/user-profile/user-profile.types.js";
+export type { ApplicantProfile, ATSAutomationPlan, ATSDetectionInput, ATSType, ScreeningAnswer } from "./domain/ats/ats.types.js";
 export { OpenAICompatibleEmbeddingProvider } from "./integrations/embeddings/openai-compatible-embedding.provider.js";
 export { OpenAICompatibleGenerationProvider } from "./integrations/generation/openai-compatible-generation.provider.js";
 export { LatexmkPdfCompiler } from "./integrations/pdf/latexmk-pdf-compiler.js";
@@ -35,4 +37,5 @@ export { GenerateCoverLetterUseCase } from "./use-cases/generate-cover-letter.us
 export { GenerateRecruiterMessageUseCase } from "./use-cases/generate-recruiter-message.use-case.js";
 export { GenerateScreeningResponseUseCase } from "./use-cases/generate-screening-response.use-case.js";
 export { RenderResumeUseCase } from "./use-cases/render-resume.use-case.js";
+export { AutofillApplicationUseCase } from "./use-cases/autofill-application.use-case.js";
 export { createLogger } from "./utils/logger.js";
