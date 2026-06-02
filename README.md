@@ -4,7 +4,7 @@ JobFlow AI is a CLI-first Job Application Orchestration Platform built with a st
 
 ## Current Status
 
-Phase 8 lifecycle tracking.
+Phase 9 observability storage and traceability.
 
 Phase 7 ATS automation has been formally split into stage-gated subphases:
 
@@ -18,6 +18,8 @@ Phase 7D - ATS Reliability Hardening
 Phase 7A foundation scaffolding, Phase 7B mock-driven Greenhouse/Lever/Generic strategies, Phase 7C Workday state-machine scaffolding, and Phase 7D ATS reliability boundaries are implemented. No live ATS automation exists yet.
 
 Phase 8 lifecycle tracking is implemented with strict state transitions, application snapshots, immutable lifecycle events, timeline reconstruction, and a `jobflow lifecycle` command group.
+
+Phase 9 observability is implemented for execution logs, failure logs, checkpoint records, execution ID traceability, and a `jobflow observability` command group. It stores trace data only and does not implement analytics, dashboards, real-time monitoring, browser sessions, or alerting.
 
 ## Commands
 
@@ -109,6 +111,17 @@ jobflow lifecycle timeline --application-id <application_id>
 
 Lifecycle tracks application state and event history only. It does not perform ATS automation, open browsers, manage screenshots, store sessions, create observability logs, calculate analytics, or submit applications.
 
+Observability smoke commands:
+
+```bash
+jobflow observability logs --execution-id <execution_id>
+jobflow observability record-log --service ats --step human_review --status success --execution-id <execution_id>
+jobflow observability record-failure --service ats --step upload_resume --message "Upload failed" --execution-id <execution_id>
+jobflow observability record-checkpoint --application-id <application_id> --ats-type greenhouse --current-step human_review --execution-id <execution_id>
+```
+
+Observability stores sanitized execution trace records only. It does not aggregate metrics, render dashboards, capture screenshots, read sessions, open browsers, or submit applications.
+
 ## Roadmap
 
 ```text
@@ -121,7 +134,7 @@ Phase 9  - Observability
 Phase 10 - Analytics
 ```
 
-Phase 7B provides mock-driven Greenhouse, Lever, and conservative Generic strategy behavior. Phase 7C detects Workday states and constructs checkpoints without automatically progressing through multiple Workday states. Phase 7D hardens ATS reliability boundaries for failures, screenshots, sessions, checkpoints, retries, and upload verification without adding live browser automation. Phase 8 tracks application lifecycle state after those workflow outputs. Live ATS automation is not allowed until explicitly approved in a later subphase, and every ATS path must stop before final submission.
+Phase 7B provides mock-driven Greenhouse, Lever, and conservative Generic strategy behavior. Phase 7C detects Workday states and constructs checkpoints without automatically progressing through multiple Workday states. Phase 7D hardens ATS reliability boundaries for failures, screenshots, sessions, checkpoints, retries, and upload verification without adding live browser automation. Phase 8 tracks application lifecycle state after those workflow outputs. Phase 9 records sanitized traceability data for debugging and recovery. Live ATS automation is not allowed until explicitly approved in a later subphase, and every ATS path must stop before final submission.
 
 ## Architecture Rule
 

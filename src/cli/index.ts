@@ -9,6 +9,7 @@ import { createDiscoverCommand } from "./commands/discover.command.js";
 import { createFragmentsCommand } from "./commands/fragments.command.js";
 import { createGenerateCommand } from "./commands/generate.command.js";
 import { createLifecycleCommand } from "./commands/lifecycle.command.js";
+import { createObservabilityCommand } from "./commands/observability.command.js";
 import { createParseCommand } from "./commands/parse.command.js";
 import { createRenderCommand } from "./commands/render.command.js";
 import { createScoreCommand } from "./commands/score.command.js";
@@ -36,6 +37,7 @@ export function buildCli(): Command {
   program.addCommand(createRenderCommand());
   program.addCommand(createApplyCommand());
   program.addCommand(createLifecycleCommand());
+  program.addCommand(createObservabilityCommand());
 
   return program;
 }
