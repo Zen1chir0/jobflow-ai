@@ -18,11 +18,12 @@ Phase 7C - Workday State Machine
 Phase 7D - ATS Reliability Hardening
 Phase 8 - Application Lifecycle Service
 Phase 9 - Observability Service
+Phase 10 - Analytics Service
 ```
 
-Future analytics and live browser automation expectations remain out of scope until explicit user approval.
+Future dashboard, reporting engine, alerting, and live browser automation expectations remain out of scope until explicit user approval.
 
-This document must not be used to justify ATS automation, analytics, dashboarding, reporting, or live monitoring work.
+This document must not be used to justify ATS automation, dashboarding, reporting engines, alerting, or live monitoring work.
 
 ## Testing Philosophy
 
@@ -66,6 +67,7 @@ node dist\src\cli\index.js render --help
 node dist\src\cli\index.js apply --help
 node dist\src\cli\index.js lifecycle --help
 node dist\src\cli\index.js observability --help
+node dist\src\cli\index.js analytics --help
 ```
 
 Targeted automated test commands:
@@ -82,9 +84,39 @@ npm test -- tests/unit/services/ats
 npm test -- tests/unit/services/lifecycle
 npm test -- tests/unit/services/observability
 npm test -- tests/unit/domain/observability
+npm test -- tests/unit/services/analytics
 npm test -- tests/integration/repositories
-npm test -- tests/integration/cli-discover.test.ts tests/integration/cli-parse.test.ts tests/integration/cli-score.test.ts tests/integration/cli-fragments.test.ts tests/integration/cli-generate.test.ts tests/integration/cli-render.test.ts tests/integration/cli-apply.test.ts tests/integration/cli-lifecycle.test.ts tests/integration/cli-observability.test.ts
+npm test -- tests/integration/cli-discover.test.ts tests/integration/cli-parse.test.ts tests/integration/cli-score.test.ts tests/integration/cli-fragments.test.ts tests/integration/cli-generate.test.ts tests/integration/cli-render.test.ts tests/integration/cli-apply.test.ts tests/integration/cli-lifecycle.test.ts tests/integration/cli-observability.test.ts tests/integration/cli-analytics.test.ts
 ```
+
+## Production Readiness Validation Stages
+
+Before JobFlow AI can be treated as a production-candidate system, testing must follow the three-stage validation model documented in:
+
+```text
+docs/progress/PRODUCTION_READINESS_VALIDATION_PLAN.md
+```
+
+Stage 1 - Local Deterministic Validation:
+
+- Runs lint, typecheck, automated tests, build, CLI smoke tests, architecture boundary scans, security scans, and artifact tracking checks.
+- Uses no live services.
+- Uses no real providers.
+- Uses no live ATS sites.
+- Uses no real credentials.
+
+Stage 2 - Staging Integration Validation:
+
+- Uses staging-safe credentials and non-production resources only.
+- Validates staging Supabase schema alignment, optional disposable write behavior, rendering artifacts, lifecycle consistency, observability traceability, and analytics readiness.
+- Allows controlled live provider smoke tests only with explicit user approval.
+- Must never write to production databases or submit real ATS applications.
+
+Stage 3 - Production Readiness Validation:
+
+- Validates the release candidate through full regression, CI, read-only database verification, lifecycle consistency, observability traceability, analytics correctness, security review, manual acceptance, rollback planning, and go/no-go decision.
+- Uses read-only production checks by default.
+- Requires explicit user approval for any production write, live provider call, live ATS validation, or final submission scenario.
 
 ## Test Layers
 

@@ -4,7 +4,7 @@ JobFlow AI is a CLI-first Job Application Orchestration Platform built with a st
 
 ## Current Status
 
-Phase 9 observability storage and traceability.
+Phase 10 analytics computation and retrieval.
 
 Phase 7 ATS automation has been formally split into stage-gated subphases:
 
@@ -20,6 +20,8 @@ Phase 7A foundation scaffolding, Phase 7B mock-driven Greenhouse/Lever/Generic s
 Phase 8 lifecycle tracking is implemented with strict state transitions, application snapshots, immutable lifecycle events, timeline reconstruction, and a `jobflow lifecycle` command group.
 
 Phase 9 observability is implemented for execution logs, failure logs, checkpoint records, execution ID traceability, and a `jobflow observability` command group. It stores trace data only and does not implement analytics, dashboards, real-time monitoring, browser sessions, or alerting.
+
+Phase 10 analytics is implemented for read-only CLI summaries across application funnel, lifecycle, execution, ATS reliability, and job pipeline data. It does not create dashboards, charts, reports, alerts, lifecycle transitions, observability writes, or ATS automation.
 
 ## Commands
 
@@ -46,6 +48,26 @@ npm run build
 ```
 
 CI uses placeholder environment variables only. It does not require real Supabase credentials, LLM keys, embedding provider calls, ATS credentials, Playwright browsers, LaTeX installation, live ATS websites, deployments, or artifact uploads.
+
+## Production Readiness Validation
+
+Phase 10 completion does not make JobFlow AI production-ready by itself.
+
+The production-candidate path is defined as a three-stage validation model:
+
+```text
+Stage 1 - Local Deterministic Validation
+Stage 2 - Staging Integration Validation
+Stage 3 - Production Readiness Validation
+```
+
+Stage 1 validates local gates, CLI smoke tests, architecture scans, security scans, and artifact tracking without live services. Stage 2 validates staging-safe integration behavior with non-production resources and explicit approval for any live provider or disposable write checks. Stage 3 validates release-candidate readiness with full regression, CI, read-only database verification, security review, manual acceptance, rollback planning, and a go/no-go verdict.
+
+The plan is documented in:
+
+```text
+docs/progress/PRODUCTION_READINESS_VALIDATION_PLAN.md
+```
 
 ## Phase 1 Discovery
 
@@ -122,6 +144,19 @@ jobflow observability record-checkpoint --application-id <application_id> --ats-
 
 Observability stores sanitized execution trace records only. It does not aggregate metrics, render dashboards, capture screenshots, read sessions, open browsers, or submit applications.
 
+Analytics smoke commands:
+
+```bash
+jobflow analytics summary
+jobflow analytics funnel
+jobflow analytics lifecycle
+jobflow analytics executions
+jobflow analytics ats
+jobflow analytics pipeline
+```
+
+Analytics reads existing records and renders safe aggregate summaries only. It does not expose raw metadata, checkpoint payloads, cookies, tokens, authorization headers, provider secrets, or service role keys.
+
 ## Roadmap
 
 ```text
@@ -134,7 +169,7 @@ Phase 9  - Observability
 Phase 10 - Analytics
 ```
 
-Phase 7B provides mock-driven Greenhouse, Lever, and conservative Generic strategy behavior. Phase 7C detects Workday states and constructs checkpoints without automatically progressing through multiple Workday states. Phase 7D hardens ATS reliability boundaries for failures, screenshots, sessions, checkpoints, retries, and upload verification without adding live browser automation. Phase 8 tracks application lifecycle state after those workflow outputs. Phase 9 records sanitized traceability data for debugging and recovery. Live ATS automation is not allowed until explicitly approved in a later subphase, and every ATS path must stop before final submission.
+Phase 7B provides mock-driven Greenhouse, Lever, and conservative Generic strategy behavior. Phase 7C detects Workday states and constructs checkpoints without automatically progressing through multiple Workday states. Phase 7D hardens ATS reliability boundaries for failures, screenshots, sessions, checkpoints, retries, and upload verification without adding live browser automation. Phase 8 tracks application lifecycle state after those workflow outputs. Phase 9 records sanitized traceability data for debugging and recovery. Phase 10 computes read-only CLI analytics from existing lifecycle and observability records. Live ATS automation is not allowed until explicitly approved in a later subphase, and every ATS path must stop before final submission.
 
 ## Architecture Rule
 

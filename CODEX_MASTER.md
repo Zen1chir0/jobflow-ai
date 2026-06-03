@@ -1403,6 +1403,45 @@ A phase cannot be marked complete until its phase report satisfies all required 
 
 ---
 
+# SECTION 29
+
+# Production Readiness Validation
+
+Completing Phase 10 does not automatically make JobFlow AI production-ready.
+
+Before the project may be called production-candidate, it must pass the approved production readiness validation model:
+
+```text
+Stage 1 - Local Deterministic Validation
+Stage 2 - Staging Integration Validation
+Stage 3 - Production Readiness Validation
+```
+
+Stage 1 must validate code, tests, CLI smoke checks, architecture boundaries, security scans, and artifact tracking without live services.
+
+Stage 2 must validate staging-safe integration behavior using non-production resources and explicit approval for any live provider or disposable write checks.
+
+Stage 3 must validate the release candidate through full regression, CI, database verification, lifecycle consistency, observability traceability, analytics correctness, security review, manual acceptance, rollback planning, known limitations, and a go/no-go verdict.
+
+Production readiness validation must not bypass:
+
+* the human approval boundary
+* repository boundaries
+* provider boundaries
+* lifecycle boundaries
+* observability boundaries
+* analytics read-only boundaries
+
+No final ATS submission, production database write, live provider smoke test, live ATS validation, credential setup, or deployment behavior may occur without explicit user approval.
+
+The permanent validation plan is stored at:
+
+```text
+docs/progress/PRODUCTION_READINESS_VALIDATION_PLAN.md
+```
+
+---
+
 # Final Rule
 
 Before requesting approval to proceed to the next phase, Codex must:

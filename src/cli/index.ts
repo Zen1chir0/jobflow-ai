@@ -4,6 +4,7 @@ import { Command } from "commander";
 import { normalize } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { createAnalyticsCommand } from "./commands/analytics.command.js";
 import { createApplyCommand } from "./commands/apply.command.js";
 import { createDiscoverCommand } from "./commands/discover.command.js";
 import { createFragmentsCommand } from "./commands/fragments.command.js";
@@ -38,6 +39,7 @@ export function buildCli(): Command {
   program.addCommand(createApplyCommand());
   program.addCommand(createLifecycleCommand());
   program.addCommand(createObservabilityCommand());
+  program.addCommand(createAnalyticsCommand());
 
   return program;
 }

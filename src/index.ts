@@ -1,4 +1,5 @@
 export { buildCli } from "./cli/index.js";
+export { createAnalyticsCommand } from "./cli/commands/analytics.command.js";
 export { createApplyCommand } from "./cli/commands/apply.command.js";
 export { createDiscoverCommand } from "./cli/commands/discover.command.js";
 export { createFragmentsCommand } from "./cli/commands/fragments.command.js";
@@ -22,6 +23,7 @@ export type { ATSCheckpointRecord, ATSFailureRecord, ATSFailureStep, RetryDecisi
 export type { WorkdayCheckpoint, WorkdayState } from "./domain/ats/workday.types.js";
 export type { Application, ApplicationEvent, ApplicationState, ApplicationTimeline } from "./domain/applications/application.types.js";
 export type { AutomationCheckpoint, ExecutionLog } from "./domain/observability/observability.types.js";
+export type { PlatformAnalyticsSummary } from "./domain/analytics/analytics.types.js";
 export { OpenAICompatibleEmbeddingProvider } from "./integrations/embeddings/openai-compatible-embedding.provider.js";
 export { OpenAICompatibleGenerationProvider } from "./integrations/generation/openai-compatible-generation.provider.js";
 export { LatexmkPdfCompiler } from "./integrations/pdf/latexmk-pdf-compiler.js";
@@ -37,6 +39,7 @@ export { SupabaseApplicationRepository } from "./repositories/application.reposi
 export { SupabaseApplicationEventRepository } from "./repositories/application-event.repository.js";
 export { SupabaseAutomationCheckpointRepository } from "./repositories/automation-checkpoint.repository.js";
 export { SupabaseExecutionLogRepository } from "./repositories/execution-log.repository.js";
+export { SupabaseAnalyticsRepository } from "./repositories/analytics.repository.js";
 export { ATSAutomationService } from "./services/ats/ats-automation.service.js";
 export { ATSStrategyRegistry } from "./services/ats/ats-strategy-registry.js";
 export { ATSTypeDetector } from "./services/ats/ats-type-detector.js";
@@ -56,6 +59,7 @@ export { WorkdayStateMachine } from "./services/ats/workday/workday-state-machin
 export { LifecycleService } from "./services/lifecycle/lifecycle.service.js";
 export { StateTransitionValidator } from "./services/lifecycle/state-transition.validator.js";
 export { ObservabilityService } from "./services/observability/observability.service.js";
+export { AnalyticsService } from "./services/analytics/analytics.service.js";
 export { DiscoverJobsUseCase } from "./use-cases/discover-jobs.use-case.js";
 export { ParseJobUseCase } from "./use-cases/parse-job.use-case.js";
 export { ScoreJobUseCase } from "./use-cases/score-job.use-case.js";
@@ -74,4 +78,10 @@ export { GetExecutionLogsUseCase } from "./use-cases/get-execution-logs.use-case
 export { RecordCheckpointUseCase } from "./use-cases/record-checkpoint.use-case.js";
 export { RecordExecutionLogUseCase } from "./use-cases/record-execution-log.use-case.js";
 export { RecordFailureUseCase } from "./use-cases/record-failure.use-case.js";
+export { GetApplicationFunnelAnalyticsUseCase } from "./use-cases/get-application-funnel-analytics.use-case.js";
+export { GetATSReliabilityAnalyticsUseCase } from "./use-cases/get-ats-reliability-analytics.use-case.js";
+export { GetExecutionAnalyticsUseCase } from "./use-cases/get-execution-analytics.use-case.js";
+export { GetJobPipelineAnalyticsUseCase } from "./use-cases/get-job-pipeline-analytics.use-case.js";
+export { GetLifecycleAnalyticsUseCase } from "./use-cases/get-lifecycle-analytics.use-case.js";
+export { GetPlatformAnalyticsSummaryUseCase } from "./use-cases/get-platform-analytics-summary.use-case.js";
 export { createLogger } from "./utils/logger.js";

@@ -496,18 +496,18 @@ export type ResumeJson = {
 ```ts
 export type ApplicationState =
   | "DISCOVERED"
-  | "ANALYZED"
-  | "READY_TO_APPLY"
-  | "AUTOFILL_STARTED"
-  | "AUTOFILL_COMPLETED"
-  | "SUBMITTED"
-  | "ASSESSMENT"
-  | "INTERVIEW"
+  | "PARSED"
+  | "SCORED"
+  | "GENERATED"
+  | "RENDERED"
+  | "READY_FOR_APPLICATION"
+  | "HUMAN_APPROVAL_REQUIRED"
+  | "APPLIED"
+  | "INTERVIEWING"
   | "OFFER"
-  | "HIRED"
   | "REJECTED"
   | "WITHDRAWN"
-  | "GHOSTED";
+  | "HIRED";
 ```
 
 ---
@@ -853,13 +853,13 @@ All state transitions must be validated.
 Example valid transition:
 
 ```text
-DISCOVERED → ANALYZED
+DISCOVERED → PARSED
 ```
 
 Example invalid transition:
 
 ```text
-DISCOVERED → INTERVIEW
+DISCOVERED → INTERVIEWING
 ```
 
 unless manually overridden with metadata.
