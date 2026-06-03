@@ -3,6 +3,7 @@ dist/
 coverage/
 .env
 .env.*
+.env.example.local
 !.env.example
 storage/playwright-state/
 storage/screenshots/
@@ -11,3 +12,6 @@ storage/resumes/
 storage/latex/
 *.pdf
 *.log
+schema.sql
+jobflow-schema-export/
+
