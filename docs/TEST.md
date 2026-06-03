@@ -18,11 +18,12 @@ Phase 7C - Workday State Machine
 Phase 7D - ATS Reliability Hardening
 Phase 8 - Application Lifecycle Service
 Phase 9 - Observability Service
+Phase 10 - Analytics Service
 ```
 
-Future analytics and live browser automation expectations remain out of scope until explicit user approval.
+Future dashboard, reporting engine, alerting, and live browser automation expectations remain out of scope until explicit user approval.
 
-This document must not be used to justify ATS automation, analytics, dashboarding, reporting, or live monitoring work.
+This document must not be used to justify ATS automation, dashboarding, reporting engines, alerting, or live monitoring work.
 
 ## Testing Philosophy
 
@@ -66,6 +67,7 @@ node dist\src\cli\index.js render --help
 node dist\src\cli\index.js apply --help
 node dist\src\cli\index.js lifecycle --help
 node dist\src\cli\index.js observability --help
+node dist\src\cli\index.js analytics --help
 ```
 
 Targeted automated test commands:
@@ -82,8 +84,9 @@ npm test -- tests/unit/services/ats
 npm test -- tests/unit/services/lifecycle
 npm test -- tests/unit/services/observability
 npm test -- tests/unit/domain/observability
+npm test -- tests/unit/services/analytics
 npm test -- tests/integration/repositories
-npm test -- tests/integration/cli-discover.test.ts tests/integration/cli-parse.test.ts tests/integration/cli-score.test.ts tests/integration/cli-fragments.test.ts tests/integration/cli-generate.test.ts tests/integration/cli-render.test.ts tests/integration/cli-apply.test.ts tests/integration/cli-lifecycle.test.ts tests/integration/cli-observability.test.ts
+npm test -- tests/integration/cli-discover.test.ts tests/integration/cli-parse.test.ts tests/integration/cli-score.test.ts tests/integration/cli-fragments.test.ts tests/integration/cli-generate.test.ts tests/integration/cli-render.test.ts tests/integration/cli-apply.test.ts tests/integration/cli-lifecycle.test.ts tests/integration/cli-observability.test.ts tests/integration/cli-analytics.test.ts
 ```
 
 ## Test Layers
