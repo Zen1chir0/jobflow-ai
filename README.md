@@ -1,186 +1,314 @@
 # JobFlow AI
 
-JobFlow AI is a CLI-first Job Application Orchestration Platform built with a stage-gated development model.
+JobFlow AI is a CLI-first, deterministic-first, AI-assisted job application orchestration platform with phase-gated architecture, tests, CI, lifecycle tracking, observability, analytics, and ATS safety boundaries.
 
-## Current Status
+## What JobFlow AI Is
 
-Phase 10 analytics computation and retrieval.
+JobFlow AI is an open-source engineering project for coordinating the job application workflow from discovery through parsing, scoring, resume intelligence, document generation, resume rendering, ATS preparation, lifecycle tracking, observability, and analytics.
 
-Phase 7 ATS automation has been formally split into stage-gated subphases:
+It is built as a backend-first TypeScript CLI platform with a strong separation between command handling, use cases, services, repositories, domain logic, and integrations.
 
-```text
-Phase 7A - ATS Automation Foundation
-Phase 7B - Greenhouse / Lever / Generic Strategies
-Phase 7C - Workday State Machine
-Phase 7D - ATS Reliability Hardening
-```
-
-Phase 7A foundation scaffolding, Phase 7B mock-driven Greenhouse/Lever/Generic strategies, Phase 7C Workday state-machine scaffolding, and Phase 7D ATS reliability boundaries are implemented. No live ATS automation exists yet.
-
-Phase 8 lifecycle tracking is implemented with strict state transitions, application snapshots, immutable lifecycle events, timeline reconstruction, and a `jobflow lifecycle` command group.
-
-Phase 9 observability is implemented for execution logs, failure logs, checkpoint records, execution ID traceability, and a `jobflow observability` command group. It stores trace data only and does not implement analytics, dashboards, real-time monitoring, browser sessions, or alerting.
-
-Phase 10 analytics is implemented for read-only CLI summaries across application funnel, lifecycle, execution, ATS reliability, and job pipeline data. It does not create dashboards, charts, reports, alerts, lifecycle transitions, observability writes, or ATS automation.
-
-## Commands
-
-```bash
-npm ci
-npm run lint
-npm run typecheck
-npm test
-npm run build
-```
-
-## Continuous Integration
-
-GitHub Actions runs CI on pull requests, pushes to `main`, and manual workflow dispatch.
-
-The CI workflow uses Node.js 22 on an Ubuntu runner and runs:
-
-```bash
-npm ci
-npm run lint
-npm run typecheck
-npm test
-npm run build
-```
-
-CI uses placeholder environment variables only. It does not require real Supabase credentials, LLM keys, embedding provider calls, ATS credentials, Playwright browsers, LaTeX installation, live ATS websites, deployments, or artifact uploads.
-
-## Production Readiness Validation
-
-Phase 10 completion does not make JobFlow AI production-ready by itself.
-
-The production-candidate path is defined as a three-stage validation model:
+The project demonstrates a disciplined AI-assisted development process:
 
 ```text
-Stage 1 - Local Deterministic Validation
-Stage 2 - Staging Integration Validation
-Stage 3 - Production Readiness Validation
+Plan
+Approve
+Implement
+Test
+Audit
+Document
+Validate
 ```
 
-Stage 1 validates local gates, CLI smoke tests, architecture scans, security scans, and artifact tracking without live services. Stage 2 validates staging-safe integration behavior with non-production resources and explicit approval for any live provider or disposable write checks. Stage 3 validates release-candidate readiness with full regression, CI, read-only database verification, security review, manual acceptance, rollback planning, and a go/no-go verdict.
+## What JobFlow AI Is Not
 
-The plan is documented in:
+JobFlow AI is not production SaaS today.
 
-```text
-docs/progress/PRODUCTION_READINESS_VALIDATION_PLAN.md
-```
+It is also not:
 
-## Phase 1 Discovery
+- An autonomous job application submitter.
+- A live ATS submission bot.
+- A multi-user hosted product.
+- A billing or account-management platform.
+- A dashboard-first analytics product.
+- A production deployment template.
 
-Manual discovery smoke command:
+No final ATS submission automation exists.
 
-```bash
-jobflow discover --source manual --title "QA Automation Engineer" --company "Example Co" --url "https://example.com/jobs/qa" --description "Build and maintain automated tests."
-```
+Human approval remains mandatory.
 
-Deterministic parsing smoke command:
+## Why It Matters
 
-```bash
-jobflow parse --job-id <job_id>
-```
+JobFlow AI demonstrates how AI-assisted development can remain maintainable when governed by architecture boundaries, deterministic services, phase gates, tests, audits, and validation reports.
 
-Deterministic scoring smoke command:
+The project intentionally uses deterministic logic for safety-critical workflow steps such as parsing, scoring, lifecycle state transitions, observability, analytics, and ATS submission guards. AI/provider integrations are kept behind explicit boundaries and are tested with mock-first behavior.
 
-```bash
-jobflow score --job-id <job_id>
-```
+## Core Features
 
-Resume fragment smoke commands:
+- Manual job discovery and normalized job persistence.
+- Deterministic job parsing into structured job profiles.
+- Transparent match scoring across skills, experience, industry, location, and compensation.
+- Resume fragment storage, retrieval, and prompt context construction.
+- Provider-agnostic document generation for resume JSON, cover letters, recruiter messages, and screening responses.
+- Resume JSON validation and LaTeX/PDF rendering boundaries.
+- ATS detection, strategy registry, semantic locator foundation, retry/checkpoint support, and submit guard.
+- Application lifecycle tracking with approved state transitions and event timelines.
+- Observability through execution logs, failure records, and automation checkpoints.
+- Read-only analytics for funnel, lifecycle, execution, ATS reliability, pipeline, and document-generation summaries.
+- GitHub Actions CI for lint, typecheck, tests, and build.
 
-```bash
-jobflow fragments add --type project --text "Built a Playwright automation framework." --source-label "Example Project"
-jobflow fragments context --job-id <job_id>
-```
+## Architecture Overview
 
-Structured document generation smoke commands:
-
-```bash
-jobflow generate resume --job-id <job_id>
-jobflow generate cover-letter --job-id <job_id>
-jobflow generate recruiter-message --job-id <job_id>
-jobflow generate screening-response --job-id <job_id> --question "Why are you a fit for this role?"
-```
-
-Generation creates structured JSON artifacts only. It does not render LaTeX, create PDFs, automate ATS forms, or submit applications.
-
-Resume rendering smoke command:
-
-```bash
-jobflow render --document-id <generated_resume_json_document_id> --template ats
-```
-
-Rendering consumes stored ResumeJson and writes local resume artifacts only. It does not generate content, automate ATS forms, or submit applications.
-
-ATS automation foundation smoke command:
-
-```bash
-jobflow apply --job-id <job_id> --application-url <application_url> --resume-pdf <local_resume_pdf_path>
-```
-
-The current apply command is still safe for local use. Strategy execution is tested through local mock fixtures and adapters only; the CLI does not open a browser, interact with live ATS pages, or submit applications.
-
-Lifecycle smoke commands:
-
-```bash
-jobflow lifecycle create --job-id <job_id>
-jobflow lifecycle transition --application-id <application_id> --to PARSED
-jobflow lifecycle timeline --application-id <application_id>
-```
-
-Lifecycle tracks application state and event history only. It does not perform ATS automation, open browsers, manage screenshots, store sessions, create observability logs, calculate analytics, or submit applications.
-
-Observability smoke commands:
-
-```bash
-jobflow observability logs --execution-id <execution_id>
-jobflow observability record-log --service ats --step human_review --status success --execution-id <execution_id>
-jobflow observability record-failure --service ats --step upload_resume --message "Upload failed" --execution-id <execution_id>
-jobflow observability record-checkpoint --application-id <application_id> --ats-type greenhouse --current-step human_review --execution-id <execution_id>
-```
-
-Observability stores sanitized execution trace records only. It does not aggregate metrics, render dashboards, capture screenshots, read sessions, open browsers, or submit applications.
-
-Analytics smoke commands:
-
-```bash
-jobflow analytics summary
-jobflow analytics funnel
-jobflow analytics lifecycle
-jobflow analytics executions
-jobflow analytics ats
-jobflow analytics pipeline
-```
-
-Analytics reads existing records and renders safe aggregate summaries only. It does not expose raw metadata, checkpoint payloads, cookies, tokens, authorization headers, provider secrets, or service role keys.
-
-## Roadmap
-
-```text
-Phase 7A - ATS Automation Foundation
-Phase 7B - Greenhouse / Lever / Generic Strategies
-Phase 7C - Workday State Machine
-Phase 7D - ATS Reliability Hardening
-Phase 8  - Lifecycle
-Phase 9  - Observability
-Phase 10 - Analytics
-```
-
-Phase 7B provides mock-driven Greenhouse, Lever, and conservative Generic strategy behavior. Phase 7C detects Workday states and constructs checkpoints without automatically progressing through multiple Workday states. Phase 7D hardens ATS reliability boundaries for failures, screenshots, sessions, checkpoints, retries, and upload verification without adding live browser automation. Phase 8 tracks application lifecycle state after those workflow outputs. Phase 9 records sanitized traceability data for debugging and recovery. Phase 10 computes read-only CLI analytics from existing lifecycle and observability records. Live ATS automation is not allowed until explicitly approved in a later subphase, and every ATS path must stop before final submission.
-
-## Architecture Rule
-
-All executable workflows must follow:
+JobFlow AI follows this primary dependency flow:
 
 ```text
 CLI
-Use Case
-Service
-Repository
-Database / Integration
+Use Cases
+Services
+Repositories
+Supabase / Integrations
 ```
 
-The CLI only parses arguments, invokes use cases, and displays results.
+Core boundaries:
+
+| Layer | Responsibility |
+| --- | --- |
+| CLI | Parse arguments, call use cases, render safe command output |
+| Use Cases | Coordinate workflow-level application behavior |
+| Services | Own business logic and deterministic orchestration |
+| Repositories | Own Supabase query syntax and persistence mapping |
+| Domain | Define pure types, state machines, and validation rules |
+| Integrations | Isolate providers, Supabase clients, rendering, and ATS/browser boundaries |
+
+Subsystems:
+
+- Discovery
+- Parsing
+- Match scoring
+- Resume intelligence
+- Document generation
+- Resume rendering
+- ATS safety and strategies
+- Lifecycle
+- Observability
+- Analytics
+
+See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the full architecture guide.
+
+## Safety Boundaries
+
+JobFlow AI is built around explicit safety rules:
+
+- No final ATS submission automation exists.
+- Human approval remains mandatory before any real application action.
+- ATS workflows are mock-first and fixture-driven by default.
+- Provider calls are behind integration boundaries.
+- Automated tests do not require live provider keys.
+- CLI and domain layers do not perform direct Supabase queries.
+- Analytics is read-only.
+- Secrets, cookies, browser session files, screenshots with personal data, and private generated artifacts must not be committed.
+- Production database writes are not part of validation.
+
+## Validation Evidence
+
+Current validation status:
+
+```text
+Stage 1 Validation: PASS
+Stage 2 Validation: PASS
+Stage 3 Production Readiness: NO-GO
+```
+
+Stage 3 is a `NO-GO` for Production SaaS readiness.
+
+That is not a blocker for OSS readiness.
+
+The Stage 3 result means the project is not yet approved as a production-operated SaaS because production RLS/access policies, production read-only schema verification, remote CI status evidence, release runbooks, rollback procedures, backup/restore validation, and operational readiness still need production hardening.
+
+Latest recorded automated validation:
+
+```text
+111 test files passed
+180 tests passed
+```
+
+Core local gates:
+
+```bash
+npm run lint
+npm run typecheck
+npm test
+npm run build
+```
+
+Validation reports:
+
+- [Stage 1 Local Deterministic Validation](docs/progress/STAGE_01_LOCAL_DETERMINISTIC_VALIDATION.md)
+- [Stage 2 Controlled Integration Validation](docs/progress/STAGE_02_CONTROLLED_INTEGRATION_VALIDATION.md)
+- [Stage 3 Production Readiness Validation](docs/progress/STAGE_03_PRODUCTION_READINESS_VALIDATION.md)
+- [Project Health and Readiness Assessment](docs/progress/PROJECT_HEALTH_AND_READINESS_ASSESSMENT.md)
+
+## Quick Start
+
+Requirements:
+
+- Node.js 22
+- npm
+
+Install and run the local validation gates:
+
+```bash
+npm ci
+npm run lint
+npm run typecheck
+npm test
+npm run build
+node dist/src/cli/index.js --help
+```
+
+The deterministic local test suite uses fake or mocked credentials. It does not require live Supabase credentials, live provider keys, live ATS websites, or production resources.
+
+Useful CLI help commands after build:
+
+```bash
+node dist/src/cli/index.js discover --help
+node dist/src/cli/index.js parse --help
+node dist/src/cli/index.js score --help
+node dist/src/cli/index.js fragments --help
+node dist/src/cli/index.js generate --help
+node dist/src/cli/index.js render --help
+node dist/src/cli/index.js apply --help
+node dist/src/cli/index.js lifecycle --help
+node dist/src/cli/index.js observability --help
+node dist/src/cli/index.js analytics --help
+```
+
+## Repository Structure
+
+```text
+src/
+  cli/                 CLI commands and output rendering
+  config/              Environment validation and configuration
+  domain/              Pure domain types, lifecycle state machine, schemas
+  integrations/        Supabase, provider, ATS, rendering integration boundaries
+  repositories/        Persistence mappings and Supabase query ownership
+  services/            Business logic and subsystem orchestration
+  use-cases/           Workflow-level application coordination
+
+tests/
+  integration/         Mocked repository, CLI, and workflow integration tests
+  unit/                Deterministic unit tests
+
+docs/
+  ARCHITECTURE.md      Architecture guide
+  DATABASE.md          Database schema and lifecycle documentation
+  TEST.md              Test strategy and validation commands
+  progress/            Phase reports, audits, and readiness validation history
+```
+
+## Current Status
+
+JobFlow AI has completed Phase 00 through Phase 10:
+
+```text
+Foundation
+Discovery
+Parsing
+Match Scoring
+Resume Intelligence
+Document Generation
+Resume Rendering
+ATS Foundation and Strategies
+Lifecycle
+Observability
+Analytics
+```
+
+Current OSS-facing classification:
+
+```text
+Open Source Submission Readiness in progress
+```
+
+Production classification:
+
+```text
+Staging-validated Advanced Portfolio System
+```
+
+It is architecturally mature, well-tested, and staging-validated. It is not production SaaS yet.
+
+## Known Limitations
+
+Important limitations:
+
+- Production RLS/access policies are not verified.
+- Production read-only schema verification has not been completed.
+- Remote GitHub Actions green status still needs public verification for the target commit.
+- Production release, rollback, incident response, and backup/restore runbooks are not complete.
+- No deployment target is validated.
+- No dashboard or frontend exists.
+- No billing, tenancy, or multi-user SaaS operations exist.
+- Live ATS automation is not production-ready.
+- No final ATS submission automation exists.
+- Execution ID propagation is not universal across all historical workflows.
+
+These limitations are documented openly so reviewers can distinguish OSS readiness from Production SaaS readiness.
+
+## Roadmap
+
+Immediate OSS readiness priorities:
+
+- Add public-facing license, contribution, and security documentation.
+- Rewrite README for evaluator clarity.
+- Add installation and environment setup guides.
+- Add a concise architecture map.
+- Add safe demo workflow and example data guidance.
+- Add issue and pull request templates.
+
+Future production hardening:
+
+- Production RLS and access policy audit.
+- Production read-only schema verification.
+- Release and rollback runbooks.
+- Incident response checklist.
+- Backup and restore validation.
+- Provider usage and budget policy.
+- Execution ID propagation follow-up.
+
+Explicitly future:
+
+- Dashboard UI.
+- External monitoring and alerting.
+- Multi-user SaaS tenancy.
+- Billing.
+- Production live ATS workflows.
+
+## Contributing
+
+Contributions should preserve the project's architecture boundaries, deterministic-first design, mock-first testing posture, and ATS safety rules.
+
+Before opening a pull request, run:
+
+```bash
+npm run lint
+npm run typecheck
+npm test
+npm run build
+```
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for contributor guidelines.
+
+## Security
+
+Do not commit credentials, provider keys, Supabase service role keys, cookies, browser session files, screenshots containing personal data, or private generated artifacts.
+
+Security issues should be reported responsibly and should not be opened publicly if they include secrets or exploitable details.
+
+See [SECURITY.md](SECURITY.md) for the security policy.
+
+## License
+
+JobFlow AI is released under the MIT License.
+
+See [LICENSE](LICENSE).
