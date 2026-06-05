@@ -1,0 +1,37 @@
+{
+  "id": "profile_example_001",
+  "fullName": "Alex Rivera",
+  "headline": "Backend QA Automation Engineer",
+  "email": "alex.rivera@example.test",
+  "phone": "example-phone-not-real",
+  "location": "Remote",
+  "linkedinUrl": "https://www.linkedin.com/in/example-profile",
+  "githubUrl": "https://github.com/example-profile",
+  "portfolioUrl": "https://example.test",
+  "targetRoles": [
+    "Quality Automation Engineer",
+    "Backend Test Engineer",
+    "Developer Productivity Engineer"
+  ],
+  "targetIndustries": [
+    "Developer Tools",
+    "SaaS",
+    "AI Infrastructure"
+  ],
+  "verifiedSkills": [
+    "TypeScript",
+    "Node.js",
+    "Vitest",
+    "CI",
+    "Supabase",
+    "PostgreSQL",
+    "Observability"
+  ],
+  "preferredRemoteTypes": [
+    "remote"
+  ],
+  "minimumSalary": null,
+  "salaryCurrency": "USD",
+  "baselineSeniority": "mid",
+  "notes": "Fake profile for OSS review only. No real personal data."
+}

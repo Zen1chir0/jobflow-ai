@@ -1,0 +1,44 @@
+{
+  "generatedAt": "2026-01-01T00:10:00.000Z",
+  "source": "safe-example-data",
+  "funnel": {
+    "totalApplications": 1,
+    "byState": {
+      "HUMAN_APPROVAL_REQUIRED": 1
+    },
+    "conversionNotes": "Example stops before final submission."
+  },
+  "lifecycle": {
+    "statesObserved": [
+      "DISCOVERED",
+      "PARSED",
+      "SCORED",
+      "GENERATED",
+      "RENDERED",
+      "READY_FOR_APPLICATION",
+      "HUMAN_APPROVAL_REQUIRED"
+    ],
+    "terminalStatesObserved": []
+  },
+  "execution": {
+    "executionIdsObserved": [
+      "exec_example_001"
+    ],
+    "successCount": 1,
+    "warningCount": 1,
+    "failedCount": 0
+  },
+  "atsReliability": {
+    "atsType": "greenhouse",
+    "checkpointCount": 1,
+    "finalSubmissionAttempted": false
+  },
+  "pipeline": {
+    "jobsDiscovered": 1,
+    "jobsParsed": 1,
+    "jobsScored": 1,
+    "documentsGenerated": 1,
+    "resumesRendered": 1
+  },
+  "notes": "Fake analytics summary for OSS review. Analytics is read-only and does not create workflow records."
+}

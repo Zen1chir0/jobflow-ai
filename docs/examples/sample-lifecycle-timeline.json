@@ -1,0 +1,57 @@
+{
+  "applicationId": "application_example_001",
+  "jobId": "job_example_001",
+  "currentState": "HUMAN_APPROVAL_REQUIRED",
+  "events": [
+    {
+      "fromState": null,
+      "toState": "DISCOVERED",
+      "eventType": "STATE_TRANSITION",
+      "executionId": "exec_example_001",
+      "createdAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "fromState": "DISCOVERED",
+      "toState": "PARSED",
+      "eventType": "STATE_TRANSITION",
+      "executionId": "exec_example_001",
+      "createdAt": "2026-01-01T00:01:00.000Z"
+    },
+    {
+      "fromState": "PARSED",
+      "toState": "SCORED",
+      "eventType": "STATE_TRANSITION",
+      "executionId": "exec_example_001",
+      "createdAt": "2026-01-01T00:02:00.000Z"
+    },
+    {
+      "fromState": "SCORED",
+      "toState": "GENERATED",
+      "eventType": "STATE_TRANSITION",
+      "executionId": "exec_example_001",
+      "createdAt": "2026-01-01T00:03:00.000Z"
+    },
+    {
+      "fromState": "GENERATED",
+      "toState": "RENDERED",
+      "eventType": "STATE_TRANSITION",
+      "executionId": "exec_example_001",
+      "createdAt": "2026-01-01T00:04:00.000Z"
+    },
+    {
+      "fromState": "RENDERED",
+      "toState": "READY_FOR_APPLICATION",
+      "eventType": "STATE_TRANSITION",
+      "executionId": "exec_example_001",
+      "createdAt": "2026-01-01T00:05:00.000Z"
+    },
+    {
+      "fromState": "READY_FOR_APPLICATION",
+      "toState": "HUMAN_APPROVAL_REQUIRED",
+      "eventType": "STATE_TRANSITION",
+      "executionId": "exec_example_001",
+      "createdAt": "2026-01-01T00:06:00.000Z"
+    }
+  ],
+  "notes": "Fake lifecycle timeline. The workflow stops at human approval and does not submit an application."
+}

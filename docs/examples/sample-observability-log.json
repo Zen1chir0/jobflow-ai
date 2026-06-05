@@ -1,0 +1,43 @@
+{
+  "executionId": "exec_example_001",
+  "records": [
+    {
+      "service": "demo",
+      "step": "discover",
+      "status": "success",
+      "jobId": "job_example_001",
+      "applicationId": null,
+      "atsType": "greenhouse",
+      "metadata": {
+        "source": "manual",
+        "safeExample": true
+      },
+      "createdAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "service": "demo",
+      "step": "prepare_ats",
+      "status": "warning",
+      "jobId": "job_example_001",
+      "applicationId": "application_example_001",
+      "atsType": "greenhouse",
+      "metadata": {
+        "boundary": "HUMAN_APPROVAL_REQUIRED",
+        "finalSubmission": false
+      },
+      "createdAt": "2026-01-01T00:06:00.000Z"
+    }
+  ],
+  "checkpoint": {
+    "applicationId": "application_example_001",
+    "executionId": "exec_example_001",
+    "atsType": "greenhouse",
+    "currentStep": "HUMAN_APPROVAL_REQUIRED",
+    "isCompleted": false,
+    "checkpointData": {
+      "safeExample": true,
+      "containsSecrets": false
+    }
+  },
+  "notes": "Fake observability data. Contains no secrets, cookies, session data, or personal screenshots."
+}

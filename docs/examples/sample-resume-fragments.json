@@ -1,0 +1,46 @@
+[
+  {
+    "id": "fragment_example_001",
+    "fragmentType": "project",
+    "sourceLabel": "CLI validation platform",
+    "fragmentText": "Built deterministic CLI validation gates covering lint, typecheck, tests, build, and smoke checks for a TypeScript workflow platform.",
+    "metadata": {
+      "skills": [
+        "TypeScript",
+        "CLI",
+        "CI",
+        "Vitest"
+      ],
+      "evidenceType": "project"
+    }
+  },
+  {
+    "id": "fragment_example_002",
+    "fragmentType": "work_experience",
+    "sourceLabel": "Backend quality automation",
+    "fragmentText": "Improved repository-level integration tests with mocked database clients and explicit architecture boundary checks.",
+    "metadata": {
+      "skills": [
+        "Testing",
+        "Repository Pattern",
+        "Supabase",
+        "Architecture"
+      ],
+      "evidenceType": "experience"
+    }
+  },
+  {
+    "id": "fragment_example_003",
+    "fragmentType": "skill",
+    "sourceLabel": "Observability and analytics",
+    "fragmentText": "Designed traceable execution log and checkpoint records for safer troubleshooting across staged validation workflows.",
+    "metadata": {
+      "skills": [
+        "Observability",
+        "Analytics",
+        "Execution Tracing"
+      ],
+      "evidenceType": "skill"
+    }
+  }
+]

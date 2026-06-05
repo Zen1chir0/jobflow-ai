@@ -1,0 +1,84 @@
+{
+  "id": "generated_document_example_001",
+  "jobId": "job_example_001",
+  "documentType": "resume_json",
+  "provider": "mock",
+  "model": "mock-model",
+  "content": {
+    "name": "Alex Rivera",
+    "headline": "Backend QA Automation Engineer",
+    "contact": {
+      "email": "alex.rivera@example.test",
+      "phone": "example-phone-not-real",
+      "location": "Remote",
+      "linkedin": "https://www.linkedin.com/in/example-profile",
+      "github": "https://github.com/example-profile",
+      "portfolio": "https://example.test"
+    },
+    "summary": "Backend QA Automation Engineer focused on deterministic TypeScript validation, CI gates, mocked integration tests, and safe observability workflows.",
+    "skills": [
+      {
+        "category": "Languages",
+        "items": [
+          "TypeScript",
+          "JavaScript",
+          "SQL"
+        ]
+      },
+      {
+        "category": "Testing",
+        "items": [
+          "Vitest",
+          "Integration Testing",
+          "CLI Smoke Testing",
+          "Mocked Repositories"
+        ]
+      },
+      {
+        "category": "Platforms",
+        "items": [
+          "Node.js",
+          "Supabase",
+          "PostgreSQL",
+          "GitHub Actions"
+        ]
+      }
+    ],
+    "experience": [
+      {
+        "company": "Example Systems Lab",
+        "title": "Backend QA Automation Engineer",
+        "startDate": "2024",
+        "endDate": "Present",
+        "location": "Remote",
+        "bullets": [
+          "Built deterministic validation gates for TypeScript CLI workflows.",
+          "Improved mocked repository integration tests for database-backed services.",
+          "Documented validation evidence for reviewer-friendly open-source workflows."
+        ]
+      }
+    ],
+    "projects": [
+      {
+        "name": "CLI Validation Harness",
+        "description": "A safe local validation workflow for backend CLI projects.",
+        "techStack": [
+          "TypeScript",
+          "Node.js",
+          "Vitest",
+          "ESLint"
+        ],
+        "bullets": [
+          "Validated lint, typecheck, test, and build gates.",
+          "Kept live provider and database calls out of automated tests."
+        ]
+      }
+    ]
+  },
+  "contextFragments": [
+    "fragment_example_001",
+    "fragment_example_002",
+    "fragment_example_003"
+  ],
+  "notes": "Fake generated document for OSS review only. Uses mock provider metadata."
+}

@@ -43,6 +43,8 @@ JobFlow AI demonstrates how AI-assisted development can remain maintainable when
 
 The project intentionally uses deterministic logic for safety-critical workflow steps such as parsing, scoring, lifecycle state transitions, observability, analytics, and ATS submission guards. AI/provider integrations are kept behind explicit boundaries and are tested with mock-first behavior.
 
+For the OpenAI OSS application framing, see [docs/OPENAI_OSS_APPLICATION_NARRATIVE.md](docs/OPENAI_OSS_APPLICATION_NARRATIVE.md).
+
 ## Core Features
 
 - Manual job discovery and normalized job persistence.
@@ -174,6 +176,10 @@ For a fuller setup path, see [docs/INSTALLATION.md](docs/INSTALLATION.md).
 
 For credential and environment rules, see [docs/ENVIRONMENT_SETUP.md](docs/ENVIRONMENT_SETUP.md).
 
+For a safe local demo walkthrough, see [docs/DEMO_WORKFLOW.md](docs/DEMO_WORKFLOW.md).
+
+For fake reviewer examples, see [docs/examples](docs/examples).
+
 Useful CLI help commands after build:
 
 ```bash
@@ -262,6 +268,8 @@ Important limitations:
 These limitations are documented openly so reviewers can distinguish OSS readiness from Production SaaS readiness.
 
 ## Roadmap
+
+For the current OSS-focused roadmap, see [docs/ROADMAP.md](docs/ROADMAP.md).
 
 Immediate OSS readiness priorities:
 
