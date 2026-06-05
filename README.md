@@ -95,6 +95,8 @@ Subsystems:
 
 See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the full architecture guide.
 
+For a compact reviewer map, see [docs/ARCHITECTURE_MAP.md](docs/ARCHITECTURE_MAP.md).
+
 ## Safety Boundaries
 
 JobFlow AI is built around explicit safety rules:
@@ -167,6 +169,10 @@ node dist/src/cli/index.js --help
 ```
 
 The deterministic local test suite uses fake or mocked credentials. It does not require live Supabase credentials, live provider keys, live ATS websites, or production resources.
+
+For a fuller setup path, see [docs/INSTALLATION.md](docs/INSTALLATION.md).
+
+For credential and environment rules, see [docs/ENVIRONMENT_SETUP.md](docs/ENVIRONMENT_SETUP.md).
 
 Useful CLI help commands after build:
 
